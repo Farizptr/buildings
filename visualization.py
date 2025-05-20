@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.collections import PatchCollection
-from shapely.geometry import Polygon, shape
+from shapely.geometry import Polygon, shape, box
 
 from geojson_utils import load_geojson, extract_polygon
 from tile_utils import create_stitched_image
@@ -94,6 +94,7 @@ def visualize_polygon_detections(geojson_path, results_data, output_path=None):
     # Plot building detections
     building_patches = []
     confidence_values = []
+    shapely_boxes_polygons = [] # For intersection detection
     building_id_counter = 1  # Initialize building ID counter
     
     for tile_detection in results_data['detections']:
@@ -110,9 +111,9 @@ def visualize_polygon_detections(geojson_path, results_data, output_path=None):
         confidences = tile_detection['confidences']
         
         # Process each box
-        for i, box in enumerate(boxes):
+        for i, bbox_coords in enumerate(boxes):
             # Get normalized coordinates (0-1) within the tile
-            x1, y1, x2, y2 = box
+            x1, y1, x2, y2 = bbox_coords
             
             # Convert to image coordinates (assuming 256x256 images)
             img_width = 256
@@ -139,50 +140,92 @@ def visualize_polygon_detections(geojson_path, results_data, output_path=None):
             ax.text(center_lon, center_lat, str(building_id_counter), color='black', fontsize=6,
                     ha='center', va='bottom', bbox=dict(facecolor='white', alpha=0.3, pad=0.1, edgecolor='none'))
             
-            # Create rectangle
+            # Create rectangle patch
             rect = patches.Rectangle(
                 (geo_x1, geo_y2),  # Lower left corner (x, y)
                 geo_x2 - geo_x1,    # Width
                 geo_y1 - geo_y2,    # Height
                 linewidth=1,
-                edgecolor='none',
-                facecolor='none'
+                edgecolor='none', # Will be set by PatchCollection or individually
+                facecolor='none'  # Will be set by PatchCollection or individually
             )
-            
             building_patches.append(rect)
+            
+            # Store shapely box for intersection detection
+            # box(minx, miny, maxx, maxy)
+            current_shapely_box = box(geo_x1, geo_y2, geo_x2, geo_y1)
+            shapely_boxes_polygons.append(current_shapely_box)
+            
             confidence_values.append(confidences[i] if i < len(confidences) else 0.5)
             building_id_counter += 1 # Increment for the next building
     
-    # Add building patches to the plot with color based on confidence
-    if building_patches:
-        # Create a PatchCollection for better performance
-        building_collection = PatchCollection(
-            building_patches, 
-            cmap=plt.cm.viridis,
+    # Identify intersecting boxes
+    num_boxes = len(shapely_boxes_polygons)
+    is_intersecting = [False] * num_boxes
+    if num_boxes > 1:
+        for i in range(num_boxes):
+            for j in range(i + 1, num_boxes):
+                if shapely_boxes_polygons[i].intersects(shapely_boxes_polygons[j]):
+                    is_intersecting[i] = True
+                    is_intersecting[j] = True
+
+    # Separate patches for plotting
+    intersecting_building_patches = []
+    non_intersecting_building_patches = []
+    non_intersecting_confidences = []
+
+    for i in range(num_boxes):
+        if is_intersecting[i]:
+            intersecting_building_patches.append(building_patches[i])
+        else:
+            non_intersecting_building_patches.append(building_patches[i])
+            non_intersecting_confidences.append(confidence_values[i])
+
+    # Add intersecting building patches to the plot
+    if intersecting_building_patches:
+        intersecting_collection = PatchCollection(
+            intersecting_building_patches,
+            facecolor='red',  # Distinct color for intersections
             alpha=0.7,
             edgecolor='black',
             linewidth=0.5
         )
-        
+        ax.add_collection(intersecting_collection)
+
+    # Add non-intersecting building patches to the plot with color based on confidence
+    if non_intersecting_building_patches:
+        non_intersecting_collection = PatchCollection(
+            non_intersecting_building_patches, 
+            cmap=plt.cm.viridis,
+            alpha=0.7,
+            edgecolor='black', # Or a different edgecolor if desired
+            linewidth=0.5
+        )
         # Set the color array based on confidence values
-        building_collection.set_array(np.array(confidence_values))
-        
+        non_intersecting_collection.set_array(np.array(non_intersecting_confidences))
         # Add the collection to the plot
-        ax.add_collection(building_collection)
-        
+        ax.add_collection(non_intersecting_collection)
         # Add a colorbar
-        cbar = plt.colorbar(building_collection, ax=ax)
-        cbar.set_label('Confidence Score')
+        cbar = plt.colorbar(non_intersecting_collection, ax=ax, shrink=0.7)
+        cbar.set_label('Confidence Score (Non-Intersecting)')
     
     # Set title and labels
+    # The len(building_patches) still represents the total number of unique buildings detected
     ax.set_title(f'Building Detections in GeoJSON Area ({len(building_patches)} buildings)', fontsize=16)
     ax.set_xlabel('Longitude', fontsize=12)
     ax.set_ylabel('Latitude', fontsize=12)
     
     # Add a legend
-    ax.plot([], [], color='blue', linewidth=2, label='GeoJSON Polygon')
-    ax.plot([], [], color='gray', linewidth=0.5, label='Tile Boundaries')
-    ax.legend(loc='upper right')
+    legend_handles = [
+        plt.Line2D([0], [0], color='blue', linewidth=2, label='GeoJSON Polygon'),
+        plt.Line2D([0], [0], color='gray', linewidth=0.5, label='Tile Boundaries')
+    ]
+    if non_intersecting_building_patches: # Only add if there are non-intersecting buildings
+        legend_handles.append(patches.Patch(facecolor=plt.cm.viridis(0.5), edgecolor='black', label='Building (Confidence)'))
+    if intersecting_building_patches: # Only add if there are intersecting buildings
+        legend_handles.append(patches.Patch(facecolor='red', edgecolor='black', label='Intersecting Building'))
+    
+    ax.legend(handles=legend_handles, loc='upper right')
     
     # Save the figure if output path is provided
     if output_path:
