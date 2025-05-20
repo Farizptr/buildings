@@ -1,0 +1,818 @@
+[
+  {
+    "building_id": 1,
+    "latitude": -6.212924165940171,
+    "longitude": 106.7400535302113,
+    "confidence": 0.43596044182777405,
+    "is_merged": true,
+    "num_detections": 2
+  },
+  {
+    "building_id": 2,
+    "latitude": -6.2139124650129185,
+    "longitude": 106.73909744562444,
+    "confidence": 0.8809586465358734,
+    "is_merged": true,
+    "num_detections": 4
+  },
+  {
+    "building_id": 3,
+    "latitude": -6.213797917071743,
+    "longitude": 106.73899698873811,
+    "confidence": 0.8930826783180237,
+    "is_merged": true,
+    "num_detections": 3
+  },
+  {
+    "building_id": 4,
+    "latitude": -6.213445514412029,
+    "longitude": 106.73840629533288,
+    "confidence": 0.8811633884906769,
+    "is_merged": true,
+    "num_detections": 2
+  },
+  {
+    "building_id": 5,
+    "latitude": -6.2135507695227705,
+    "longitude": 106.73865911025132,
+    "confidence": 0.9303231239318848,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 6,
+    "latitude": -6.2138543866434315,
+    "longitude": 106.73825900229303,
+    "confidence": 0.922993004322052,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 7,
+    "latitude": -6.214117949597618,
+    "longitude": 106.73801789469962,
+    "confidence": 0.9210571646690369,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 8,
+    "latitude": -6.213370888140678,
+    "longitude": 106.73839578809748,
+    "confidence": 0.9208427667617798,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 9,
+    "latitude": -6.213829600595043,
+    "longitude": 106.73862997392916,
+    "confidence": 0.9191418886184692,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 10,
+    "latitude": -6.213509699731737,
+    "longitude": 106.73854182782179,
+    "confidence": 0.9189622402191162,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 11,
+    "latitude": -6.21403121346204,
+    "longitude": 106.73805506964754,
+    "confidence": 0.9189587831497192,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 12,
+    "latitude": -6.213465047730114,
+    "longitude": 106.73827737785587,
+    "confidence": 0.9188653230667114,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 13,
+    "latitude": -6.21401885890724,
+    "longitude": 106.73794411430663,
+    "confidence": 0.9184741377830505,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 14,
+    "latitude": -6.214201192525039,
+    "longitude": 106.73802550702703,
+    "confidence": 0.9181804060935974,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 15,
+    "latitude": -6.2135633887250314,
+    "longitude": 106.73799778253681,
+    "confidence": 0.9181463122367859,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 16,
+    "latitude": -6.213741744513885,
+    "longitude": 106.73806690974061,
+    "confidence": 0.9181344509124756,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 17,
+    "latitude": -6.214027423728293,
+    "longitude": 106.73815158906336,
+    "confidence": 0.918067216873169,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 18,
+    "latitude": -6.213667242825596,
+    "longitude": 106.7378805727941,
+    "confidence": 0.9172248244285583,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 19,
+    "latitude": -6.213525548796673,
+    "longitude": 106.73859096316846,
+    "confidence": 0.9149670004844666,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 20,
+    "latitude": -6.213595274400828,
+    "longitude": 106.7382944335759,
+    "confidence": 0.9140303134918213,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 21,
+    "latitude": -6.21408658782574,
+    "longitude": 106.73791224172078,
+    "confidence": 0.9136395454406738,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 22,
+    "latitude": -6.214159247865524,
+    "longitude": 106.73789597104701,
+    "confidence": 0.9135047197341919,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 23,
+    "latitude": -6.213358167546845,
+    "longitude": 106.73831827290769,
+    "confidence": 0.9129961729049683,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 24,
+    "latitude": -6.213442971322639,
+    "longitude": 106.7381763452886,
+    "confidence": 0.9129939079284668,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 25,
+    "latitude": -6.213214797785208,
+    "longitude": 106.73806736921051,
+    "confidence": 0.9129728078842163,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 26,
+    "latitude": -6.21402645766029,
+    "longitude": 106.7378807593559,
+    "confidence": 0.9129553437232971,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 27,
+    "latitude": -6.214025173095811,
+    "longitude": 106.73799954645574,
+    "confidence": 0.9127863645553589,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 28,
+    "latitude": -6.213784169074516,
+    "longitude": 106.73817820647628,
+    "confidence": 0.9124382734298706,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 29,
+    "latitude": -6.213345728241386,
+    "longitude": 106.73821142842371,
+    "confidence": 0.9120485186576843,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 30,
+    "latitude": -6.21391138888705,
+    "longitude": 106.73816698450764,
+    "confidence": 0.9117688536643982,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 31,
+    "latitude": -6.213824826240099,
+    "longitude": 106.73868112195578,
+    "confidence": 0.9117013812065125,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 32,
+    "latitude": -6.213528092191213,
+    "longitude": 106.73876331768952,
+    "confidence": 0.9116976261138916,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 33,
+    "latitude": -6.214209264018323,
+    "longitude": 106.7389974370144,
+    "confidence": 0.9112680554389954,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 34,
+    "latitude": -6.213851558054582,
+    "longitude": 106.7380984643114,
+    "confidence": 0.9110512137413025,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 35,
+    "latitude": -6.213510788246744,
+    "longitude": 106.73897336077516,
+    "confidence": 0.9109819531440735,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 36,
+    "latitude": -6.214218467459801,
+    "longitude": 106.73889050566231,
+    "confidence": 0.9106871485710144,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 37,
+    "latitude": -6.213815982958407,
+    "longitude": 106.73878678906476,
+    "confidence": 0.9097945690155029,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 38,
+    "latitude": -6.213948449744059,
+    "longitude": 106.73866823228309,
+    "confidence": 0.9088562726974487,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 39,
+    "latitude": -6.213514851355276,
+    "longitude": 106.7389205013751,
+    "confidence": 0.9083867073059082,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 40,
+    "latitude": -6.213248554826151,
+    "longitude": 106.73871702609176,
+    "confidence": 0.9083719849586487,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 41,
+    "latitude": -6.213801709165326,
+    "longitude": 106.73827342475306,
+    "confidence": 0.9076786637306213,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 42,
+    "latitude": -6.213519669957144,
+    "longitude": 106.73886579738337,
+    "confidence": 0.9071339964866638,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 43,
+    "latitude": -6.213811174874086,
+    "longitude": 106.73884000968883,
+    "confidence": 0.9070872664451599,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 44,
+    "latitude": -6.213820483857191,
+    "longitude": 106.73873204185384,
+    "confidence": 0.9061384201049805,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 45,
+    "latitude": -6.213944266365268,
+    "longitude": 106.73871982825858,
+    "confidence": 0.9060077667236328,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 46,
+    "latitude": -6.21352375627751,
+    "longitude": 106.7388144362485,
+    "confidence": 0.9057140946388245,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 47,
+    "latitude": -6.213709012165577,
+    "longitude": 106.73820343676198,
+    "confidence": 0.9053553342819214,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 48,
+    "latitude": -6.213807216656191,
+    "longitude": 106.73889153772507,
+    "confidence": 0.9052033424377441,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 49,
+    "latitude": -6.2131399389632165,
+    "longitude": 106.73834817049737,
+    "confidence": 0.9050763845443726,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 50,
+    "latitude": -6.213755217386792,
+    "longitude": 106.73787763389441,
+    "confidence": 0.9047849774360657,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 51,
+    "latitude": -6.214245538154859,
+    "longitude": 106.73808979898695,
+    "confidence": 0.9046846628189087,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 52,
+    "latitude": -6.21393958335225,
+    "longitude": 106.73877103026825,
+    "confidence": 0.9041275978088379,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 53,
+    "latitude": -6.214222041390622,
+    "longitude": 106.73883870161262,
+    "confidence": 0.9037858843803406,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 54,
+    "latitude": -6.213930701947001,
+    "longitude": 106.73887851487507,
+    "confidence": 0.9037533402442932,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 55,
+    "latitude": -6.213259887378733,
+    "longitude": 106.73789945330213,
+    "confidence": 0.9034982323646545,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 56,
+    "latitude": -6.213271625650176,
+    "longitude": 106.73823181410853,
+    "confidence": 0.9032553434371948,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 57,
+    "latitude": -6.213935058895794,
+    "longitude": 106.73882535826124,
+    "confidence": 0.9032056331634521,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 58,
+    "latitude": -6.214244822636332,
+    "longitude": 106.73815803578236,
+    "confidence": 0.9031684994697571,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 59,
+    "latitude": -6.213803170229257,
+    "longitude": 106.73894329753239,
+    "confidence": 0.9025692939758301,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 60,
+    "latitude": -6.2142245614512674,
+    "longitude": 106.73878735181461,
+    "confidence": 0.901287317276001,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 61,
+    "latitude": -6.214231802973984,
+    "longitude": 106.73786888704797,
+    "confidence": 0.9012735486030579,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 62,
+    "latitude": -6.214226743567135,
+    "longitude": 106.73871657822474,
+    "confidence": 0.9009741544723511,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 63,
+    "latitude": -6.214214018314661,
+    "longitude": 106.73894436622504,
+    "confidence": 0.8999665379524231,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 64,
+    "latitude": -6.213926581185236,
+    "longitude": 106.73893009497078,
+    "confidence": 0.8988199234008789,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 65,
+    "latitude": -6.214173198401772,
+    "longitude": 106.73813406957606,
+    "confidence": 0.8983475565910339,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 66,
+    "latitude": -6.2141051170539825,
+    "longitude": 106.73814327782111,
+    "confidence": 0.8932543396949768,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 67,
+    "latitude": -6.213374144164981,
+    "longitude": 106.7384549020835,
+    "confidence": 0.891633152961731,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 68,
+    "latitude": -6.213141398659053,
+    "longitude": 106.73868493531245,
+    "confidence": 0.8392890691757202,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 69,
+    "latitude": -6.213240636122071,
+    "longitude": 106.73861999127894,
+    "confidence": 0.8248751163482666,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 70,
+    "latitude": -6.213029402596893,
+    "longitude": 106.73871701491862,
+    "confidence": 0.823599100112915,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 71,
+    "latitude": -6.214053481240003,
+    "longitude": 106.7378053195543,
+    "confidence": 0.8220170140266418,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 72,
+    "latitude": -6.21332402995693,
+    "longitude": 106.73860658772355,
+    "confidence": 0.8214471936225891,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 73,
+    "latitude": -6.212981106802626,
+    "longitude": 106.73858404445582,
+    "confidence": 0.819765031337738,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 74,
+    "latitude": -6.212935241088818,
+    "longitude": 106.73860901315493,
+    "confidence": 0.7709323763847351,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 75,
+    "latitude": -6.213039125902851,
+    "longitude": 106.73928362417541,
+    "confidence": 0.920234739780426,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 76,
+    "latitude": -6.213341786359251,
+    "longitude": 106.73950123421037,
+    "confidence": 0.9189563989639282,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 77,
+    "latitude": -6.213311837925658,
+    "longitude": 106.7400760438477,
+    "confidence": 0.9184262752532959,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 78,
+    "latitude": -6.213661239036822,
+    "longitude": 106.74033621362014,
+    "confidence": 0.9179757833480835,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 79,
+    "latitude": -6.213343041079944,
+    "longitude": 106.73999250627276,
+    "confidence": 0.9165706038475037,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 80,
+    "latitude": -6.213157235436567,
+    "longitude": 106.73936324436681,
+    "confidence": 0.9160885214805603,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 81,
+    "latitude": -6.213781441958611,
+    "longitude": 106.74003806740075,
+    "confidence": 0.9151419997215271,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 82,
+    "latitude": -6.2140242566250485,
+    "longitude": 106.74026627380044,
+    "confidence": 0.914659857749939,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 83,
+    "latitude": -6.213277724768183,
+    "longitude": 106.74016837042927,
+    "confidence": 0.9140598773956299,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 84,
+    "latitude": -6.213813455411385,
+    "longitude": 106.73959233745563,
+    "confidence": 0.9135605692863464,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 85,
+    "latitude": -6.213742535221667,
+    "longitude": 106.74013778712379,
+    "confidence": 0.9131876826286316,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 86,
+    "latitude": -6.213560107068027,
+    "longitude": 106.74020323718196,
+    "confidence": 0.9125308990478516,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 87,
+    "latitude": -6.213172956353258,
+    "longitude": 106.740025581189,
+    "confidence": 0.9125291109085083,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 88,
+    "latitude": -6.213989267215739,
+    "longitude": 106.74035408937925,
+    "confidence": 0.911920964717865,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 89,
+    "latitude": -6.213389568072926,
+    "longitude": 106.73939646024678,
+    "confidence": 0.911863386631012,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 90,
+    "latitude": -6.213147125899468,
+    "longitude": 106.74009531612683,
+    "confidence": 0.9113640785217285,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 91,
+    "latitude": -6.213770078168718,
+    "longitude": 106.73969618794672,
+    "confidence": 0.9106957316398621,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 92,
+    "latitude": -6.213054124610574,
+    "longitude": 106.73959021371957,
+    "confidence": 0.9102392792701721,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 93,
+    "latitude": -6.213599950334338,
+    "longitude": 106.74010764656941,
+    "confidence": 0.9102329611778259,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 94,
+    "latitude": -6.213122051010213,
+    "longitude": 106.74016270650554,
+    "confidence": 0.9095459580421448,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 95,
+    "latitude": -6.213869380064411,
+    "longitude": 106.73983965220032,
+    "confidence": 0.9091941714286804,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 96,
+    "latitude": -6.213001013360041,
+    "longitude": 106.73934966041429,
+    "confidence": 0.9055062532424927,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 97,
+    "latitude": -6.213907839612446,
+    "longitude": 106.73974036679738,
+    "confidence": 0.9051890969276428,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 98,
+    "latitude": -6.213033708734196,
+    "longitude": 106.74037307680464,
+    "confidence": 0.9021508097648621,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 99,
+    "latitude": -6.214240845987305,
+    "longitude": 106.73926629479524,
+    "confidence": 0.8874531388282776,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 100,
+    "latitude": -6.212945520795516,
+    "longitude": 106.73999415154867,
+    "confidence": 0.8689082264900208,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 101,
+    "latitude": -6.214158007446251,
+    "longitude": 106.7403212052659,
+    "confidence": 0.835861086845398,
+    "is_merged": false,
+    "num_detections": 1
+  },
+  {
+    "building_id": 102,
+    "latitude": -6.213433949263033,
+    "longitude": 106.74041068482438,
+    "confidence": 0.38776296377182007,
+    "is_merged": false,
+    "num_detections": 1
+  }
+]
