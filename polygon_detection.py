@@ -19,11 +19,13 @@ from building_export import save_buildings_to_json
 def convert_tile_detections_to_shapely_polygons(all_tile_detections):
     """
     Converts raw tile-based detections into a flat list of Shapely polygons 
-    with geographic coordinates and associated confidence scores.
+    with geographic coordinates, associated confidence scores, and original tile ID.
     """
     shapely_polygons_with_attrs = []
     detection_id_counter = 0
     for tile_detection in all_tile_detections:
+        # Each tile_detection should have 'tile': "z/x/y", 'bounds', 'boxes', 'confidences'
+        tile_id_str = tile_detection.get('tile', 'unknown_tile') # z/x/y string
         bounds = tile_detection['bounds'] # west, south, east, north
         west, south, east, north = bounds
         tile_width_deg = east - west
@@ -73,7 +75,8 @@ def convert_tile_detections_to_shapely_polygons(all_tile_detections):
             shapely_polygons_with_attrs.append({
                 'id': f"det_{detection_id_counter}",
                 'polygon': current_shapely_box,
-                'confidence': confidence
+                'confidence': confidence,
+                'tile_id': tile_id_str # Menyimpan ID tile asal
             })
             detection_id_counter += 1
             
@@ -117,52 +120,95 @@ def merge_overlapping_detections(individual_detections,
 
                 poly_j_obj = individual_detections[j]
                 
-                related = False
-                # 1. Check IoU
+                related_geometrically = False
+                
+                # 1. Check IoU (akan selalu false jika iou_thresh > 1.0)
                 intersection = poly_i_obj['polygon'].intersection(poly_j_obj['polygon']).area
                 if intersection > 0:
-                    # union = poly_i_obj['polygon'].area + poly_j_obj['polygon'].area - intersection 
-                    # Using unary_union.area is more robust for complex shapes or self-intersections, though potentially slower.
-                    # However, for bounding boxes, direct area sum minus intersection is fine and faster.
                     union_val = poly_i_obj['polygon'].area + poly_j_obj['polygon'].area - intersection
                     if union_val > 0 and (intersection / union_val) > iou_thresh:
-                        related = True
+                        related_geometrically = True
                 
                 # 2. Check Touches (if not related by IoU and touch is enabled)
-                if not related and touch_enabled:
+                if not related_geometrically and touch_enabled:
                     if poly_i_obj['polygon'].touches(poly_j_obj['polygon']):
-                        related = True
+                        related_geometrically = True
                 
                 # 3. Check Minimum Edge Distance (if not related by IoU or touch, and min_edge_distance_deg > 0)
-                if not related and min_edge_distance_deg > 0:
-                    # Calculate edge distance. This is 0 if they touch or intersect.
+                if not related_geometrically and min_edge_distance_deg > 0:
                     edge_dist = poly_i_obj['polygon'].distance(poly_j_obj['polygon'])
-                    # We are interested if they are close but *not* touching/intersecting (distance > 0)
-                    # and that distance is less than our threshold.
                     if 0 < edge_dist < min_edge_distance_deg:
-                        related = True
+                        related_geometrically = True
                 
-                if related:
-                    current_group_indices.add(j)
-                    group_polygons.append(poly_j_obj['polygon'])
-                    group_confidences.append(poly_j_obj['confidence'])
-                    group_ids.append(poly_j_obj['id'])
-                    if not processed_indices[j]:
-                         queue.append(j)
+                # MODIFIKASI LOGIKA: Gabungkan hanya jika terkait secara geometris DAN dari tile berbeda
+                if related_geometrically:
+                    if poly_i_obj.get('tile_id') != poly_j_obj.get('tile_id'):
+                        # Memenuhi kedua kondisi: geometris DAN beda tile
+                        current_group_indices.add(j)
+                        group_polygons.append(poly_j_obj['polygon'])
+                        group_confidences.append(poly_j_obj['confidence'])
+                        group_ids.append(poly_j_obj['id'])
+                        if not processed_indices[j]:
+                             queue.append(j)
 
+        # Setelah satu grup komponen terhubung selesai dibangun (queue kosong)
         for idx_in_group in current_group_indices:
             processed_indices[idx_in_group] = True
             
-        if group_polygons:
+        if group_polygons: 
+            # Perhitungan untuk logging dan keputusan split (biarkan ini dihitung)
+            current_group_original_tile_ids = []
+            temp_group_original_ids_for_log_and_split = [] 
+            for k_original_idx in current_group_indices:
+                original_det_obj = individual_detections[k_original_idx]
+                current_group_original_tile_ids.append(original_det_obj.get('tile_id', 'TILE_ID_MISSING'))
+                temp_group_original_ids_for_log_and_split.append(original_det_obj.get('id', 'NO_ID'))
+            
+            tile_id_counts = {}
+            for tid in current_group_original_tile_ids:
+                tile_id_counts[tid] = tile_id_counts.get(tid, 0) + 1
+            
+            has_same_tile_elements_to_merge_decision = any(
+                count > 1 for tid, count in tile_id_counts.items() if tid != 'TILE_ID_MISSING'
+            ) 
+
+            # --- LOGGING START: (Bisa tetap di sini) ---
+            if len(group_polygons) > 1: 
+                if has_same_tile_elements_to_merge_decision:
+                    print(f"DEBUG: Potential same-tile merge! Group (original IDs: {sorted(list(temp_group_original_ids_for_log_and_split))}) is about to be processed.")
+                    print(f"DEBUG: Tile IDs in this group: {sorted(current_group_original_tile_ids)}")
+                    print(f"DEBUG: Tile ID counts: {tile_id_counts}")
+            # --- LOGGING END ---
+
+            # PENGECEKAN UNTUK SPLIT (SEMENTARA DINONAKTIFKAN UNTUK DEBUGGING)
+            # Kondisi berikut ini yang akan kita komentari untuk menonaktifkan pemecahan grup
+            if has_same_tile_elements_to_merge_decision and len(group_polygons) > 1: 
+                print(f"DEBUG: Splitting group due to same-tile elements. Original IDs: {sorted(list(temp_group_original_ids_for_log_and_split))}")
+                for k_original_idx in current_group_indices:
+                    original_det_obj = individual_detections[k_original_idx]
+                    if original_det_obj and original_det_obj.get('polygon'):
+                        poly_envelope = original_det_obj['polygon'].envelope
+                        merged_buildings.append({
+                            'id': f"merged_indiv_{original_det_obj.get('id', k_original_idx)}", 
+                            'polygon': poly_envelope, 
+                            'coordinates': list(poly_envelope.exterior.coords),
+                            'confidence': original_det_obj.get('confidence', 0.0),
+                            'original_ids': [original_det_obj.get('id', k_original_idx)],
+                            'tile_id': original_det_obj.get('tile_id')
+                        })
+                    else:
+                        print(f"DEBUG: Skipping problematic original_det_obj for merged_indiv: index {k_original_idx}")
+                continue 
+            
+            # Selalu lakukan union jika group_polygons ada (karena blok if di atas dikomentari)
             combined_polygon_shape = unary_union(group_polygons)
             merged_envelope = combined_polygon_shape.envelope
-            
             merged_buildings.append({
                 'id': f"merged_{len(merged_buildings)}",
                 'polygon': merged_envelope, 
                 'coordinates': list(merged_envelope.exterior.coords),
                 'confidence': max(group_confidences) if group_confidences else 0.0,
-                'original_ids': group_ids
+                'original_ids': sorted(list(group_ids)) 
             })
             
     return merged_buildings
@@ -422,10 +468,10 @@ if __name__ == "__main__":
     # Adjust merging parameters here to be more conservative:
     results = detect_buildings_in_polygon(
         model, geojson_path, output_dir, zoom=18, conf=0.25, batch_size=batch_size,
-        enable_merging=False, 
+        enable_merging=True, 
         merge_iou_threshold=1.1,      # Increased from 0.05
         merge_touch_enabled=True,    # Changed from True
-        merge_min_edge_distance_deg=0.0000001 # Kriteria baru, ~1.1 meter. Set ke 0 jika tidak ingin aktif.
+        merge_min_edge_distance_deg=0.000001 # Kriteria baru, ~1.1 meter. Set ke 0 jika tidak ingin aktif.
     )
     
     print("\nDetection Summary:")
