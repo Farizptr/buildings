@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "total_buildings": 418,
+  "total_buildings": 415,
   "merging_enabled": true,
   "features": [
     {
@@ -10365,115 +10365,10 @@
     },
     {
       "type": "Feature",
-      "id": "merged_indiv_det_424",
-      "properties": {
-        "confidence": 0.32915768027305603,
-        "original_detection_count": 1
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              106.73805107471708,
-              -6.2143019618649245
-            ],
-            [
-              106.73812054420068,
-              -6.2143019618649245
-            ],
-            [
-              106.73812054420068,
-              -6.21428190099679
-            ],
-            [
-              106.73805107471708,
-              -6.21428190099679
-            ],
-            [
-              106.73805107471708,
-              -6.2143019618649245
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "merged_indiv_det_423",
-      "properties": {
-        "confidence": 0.33188962936401367,
-        "original_detection_count": 1
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              106.73812042669852,
-              -6.2142938218290995
-            ],
-            [
-              106.7381998041401,
-              -6.2142938218290995
-            ],
-            [
-              106.7381998041401,
-              -6.214281895360663
-            ],
-            [
-              106.73812042669852,
-              -6.214281895360663
-            ],
-            [
-              106.73812042669852,
-              -6.2142938218290995
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "merged_indiv_det_311",
-      "properties": {
-        "confidence": 0.9031684994697571,
-        "original_detection_count": 1
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              106.73812118933711,
-              -6.214281777992401
-            ],
-            [
-              106.73819488222762,
-              -6.214281777992401
-            ],
-            [
-              106.73819488222762,
-              -6.214207867280264
-            ],
-            [
-              106.73812118933711,
-              -6.214207867280264
-            ],
-            [
-              106.73812118933711,
-              -6.214281777992401
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "merged_indiv_det_303",
+      "id": "merged_296",
       "properties": {
         "confidence": 0.9046846628189087,
-        "original_detection_count": 1
+        "original_detection_count": 2
       },
       "geometry": {
         "type": "Polygon",
@@ -10481,14 +10376,14 @@
           [
             [
               106.7380543756235,
-              -6.214281860098416
+              -6.2142938218290995
             ],
             [
-              106.73812522235039,
-              -6.214281860098416
+              106.7381998041401,
+              -6.2142938218290995
             ],
             [
-              106.73812522235039,
+              106.7381998041401,
               -6.2142092162113025
             ],
             [
@@ -10497,7 +10392,7 @@
             ],
             [
               106.7380543756235,
-              -6.214281860098416
+              -6.2142938218290995
             ]
           ]
         ]
@@ -10505,7 +10400,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_300",
+      "id": "merged_297",
       "properties": {
         "confidence": 0.9041275978088379,
         "original_detection_count": 1
@@ -10540,7 +10435,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_301",
+      "id": "merged_298",
       "properties": {
         "confidence": 0.9037858843803406,
         "original_detection_count": 1
@@ -10575,7 +10470,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_302",
+      "id": "merged_299",
       "properties": {
         "confidence": 0.9037533402442932,
         "original_detection_count": 1
@@ -10610,7 +10505,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_303",
+      "id": "merged_300",
       "properties": {
         "confidence": 0.9036045074462891,
         "original_detection_count": 1
@@ -10645,7 +10540,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_304",
+      "id": "merged_301",
       "properties": {
         "confidence": 0.9034982323646545,
         "original_detection_count": 1
@@ -10680,7 +10575,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_305",
+      "id": "merged_302",
       "properties": {
         "confidence": 0.9032553434371948,
         "original_detection_count": 1
@@ -10715,7 +10610,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_306",
+      "id": "merged_303",
       "properties": {
         "confidence": 0.9032056331634521,
         "original_detection_count": 1
@@ -10750,7 +10645,42 @@
     },
     {
       "type": "Feature",
-      "id": "merged_307",
+      "id": "merged_304",
+      "properties": {
+        "confidence": 0.9031684994697571,
+        "original_detection_count": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              106.73805107471708,
+              -6.2143019618649245
+            ],
+            [
+              106.73819488222762,
+              -6.2143019618649245
+            ],
+            [
+              106.73819488222762,
+              -6.214207867280264
+            ],
+            [
+              106.73805107471708,
+              -6.214207867280264
+            ],
+            [
+              106.73805107471708,
+              -6.2143019618649245
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "merged_305",
       "properties": {
         "confidence": 0.9025692939758301,
         "original_detection_count": 1
@@ -10785,7 +10715,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_indiv_det_313",
+      "id": "merged_306",
       "properties": {
         "confidence": 0.901287317276001,
         "original_detection_count": 1
@@ -10820,77 +10750,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_indiv_det_315",
-      "properties": {
-        "confidence": 0.9009741544723511,
-        "original_detection_count": 1
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              106.73866824063225,
-              -6.214281820632195
-            ],
-            [
-              106.73876491581723,
-              -6.214281820632195
-            ],
-            [
-              106.73876491581723,
-              -6.214171666502075
-            ],
-            [
-              106.73866824063225,
-              -6.214171666502075
-            ],
-            [
-              106.73866824063225,
-              -6.214281820632195
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "merged_indiv_det_415",
-      "properties": {
-        "confidence": 0.8036600947380066,
-        "original_detection_count": 1
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              106.73867098889787,
-              -6.214294614008453
-            ],
-            [
-              106.73876271941481,
-              -6.214294614008453
-            ],
-            [
-              106.73876271941481,
-              -6.214281891752767
-            ],
-            [
-              106.73867098889787,
-              -6.214281891752767
-            ],
-            [
-              106.73867098889787,
-              -6.214294614008453
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "merged_311",
+      "id": "merged_307",
       "properties": {
         "confidence": 0.9012735486030579,
         "original_detection_count": 1
@@ -10925,7 +10785,42 @@
     },
     {
       "type": "Feature",
-      "id": "merged_312",
+      "id": "merged_308",
+      "properties": {
+        "confidence": 0.9009741544723511,
+        "original_detection_count": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              106.73866824063225,
+              -6.214294614008453
+            ],
+            [
+              106.73876491581723,
+              -6.214294614008453
+            ],
+            [
+              106.73876491581723,
+              -6.214171666502075
+            ],
+            [
+              106.73866824063225,
+              -6.214171666502075
+            ],
+            [
+              106.73866824063225,
+              -6.214294614008453
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "merged_309",
       "properties": {
         "confidence": 0.8999665379524231,
         "original_detection_count": 1
@@ -10960,7 +10855,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_313",
+      "id": "merged_310",
       "properties": {
         "confidence": 0.8988199234008789,
         "original_detection_count": 1
@@ -10995,7 +10890,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_314",
+      "id": "merged_311",
       "properties": {
         "confidence": 0.8983475565910339,
         "original_detection_count": 1
@@ -11030,7 +10925,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_315",
+      "id": "merged_312",
       "properties": {
         "confidence": 0.8980817198753357,
         "original_detection_count": 1
@@ -11065,7 +10960,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_316",
+      "id": "merged_313",
       "properties": {
         "confidence": 0.8966701030731201,
         "original_detection_count": 1
@@ -11100,7 +10995,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_317",
+      "id": "merged_314",
       "properties": {
         "confidence": 0.8932543396949768,
         "original_detection_count": 1
@@ -11135,7 +11030,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_318",
+      "id": "merged_315",
       "properties": {
         "confidence": 0.891633152961731,
         "original_detection_count": 1
@@ -11170,7 +11065,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_319",
+      "id": "merged_316",
       "properties": {
         "confidence": 0.8763316869735718,
         "original_detection_count": 1
@@ -11205,7 +11100,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_320",
+      "id": "merged_317",
       "properties": {
         "confidence": 0.8729619383811951,
         "original_detection_count": 1
@@ -11240,7 +11135,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_321",
+      "id": "merged_318",
       "properties": {
         "confidence": 0.8656566739082336,
         "original_detection_count": 1
@@ -11275,7 +11170,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_322",
+      "id": "merged_319",
       "properties": {
         "confidence": 0.8392890691757202,
         "original_detection_count": 1
@@ -11310,7 +11205,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_323",
+      "id": "merged_320",
       "properties": {
         "confidence": 0.8248751163482666,
         "original_detection_count": 1
@@ -11345,7 +11240,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_324",
+      "id": "merged_321",
       "properties": {
         "confidence": 0.823599100112915,
         "original_detection_count": 1
@@ -11380,7 +11275,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_325",
+      "id": "merged_322",
       "properties": {
         "confidence": 0.8220170140266418,
         "original_detection_count": 1
@@ -11415,7 +11310,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_326",
+      "id": "merged_323",
       "properties": {
         "confidence": 0.8214471936225891,
         "original_detection_count": 1
@@ -11450,7 +11345,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_327",
+      "id": "merged_324",
       "properties": {
         "confidence": 0.819765031337738,
         "original_detection_count": 1
@@ -11485,7 +11380,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_328",
+      "id": "merged_325",
       "properties": {
         "confidence": 0.7709323763847351,
         "original_detection_count": 1
@@ -11520,7 +11415,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_329",
+      "id": "merged_326",
       "properties": {
         "confidence": 0.9287890195846558,
         "original_detection_count": 1
@@ -11555,7 +11450,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_330",
+      "id": "merged_327",
       "properties": {
         "confidence": 0.926712691783905,
         "original_detection_count": 1
@@ -11590,7 +11485,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_331",
+      "id": "merged_328",
       "properties": {
         "confidence": 0.9225265979766846,
         "original_detection_count": 1
@@ -11625,7 +11520,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_332",
+      "id": "merged_329",
       "properties": {
         "confidence": 0.9223239421844482,
         "original_detection_count": 1
@@ -11660,7 +11555,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_333",
+      "id": "merged_330",
       "properties": {
         "confidence": 0.9218283891677856,
         "original_detection_count": 1
@@ -11695,7 +11590,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_334",
+      "id": "merged_331",
       "properties": {
         "confidence": 0.9216309785842896,
         "original_detection_count": 1
@@ -11730,7 +11625,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_335",
+      "id": "merged_332",
       "properties": {
         "confidence": 0.9208786487579346,
         "original_detection_count": 1
@@ -11765,7 +11660,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_336",
+      "id": "merged_333",
       "properties": {
         "confidence": 0.9205382466316223,
         "original_detection_count": 1
@@ -11800,7 +11695,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_337",
+      "id": "merged_334",
       "properties": {
         "confidence": 0.9204912781715393,
         "original_detection_count": 1
@@ -11835,7 +11730,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_338",
+      "id": "merged_335",
       "properties": {
         "confidence": 0.9199098944664001,
         "original_detection_count": 1
@@ -11870,7 +11765,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_339",
+      "id": "merged_336",
       "properties": {
         "confidence": 0.9192330241203308,
         "original_detection_count": 1
@@ -11905,7 +11800,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_340",
+      "id": "merged_337",
       "properties": {
         "confidence": 0.9189850091934204,
         "original_detection_count": 1
@@ -11940,7 +11835,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_341",
+      "id": "merged_338",
       "properties": {
         "confidence": 0.9184633493423462,
         "original_detection_count": 1
@@ -11975,7 +11870,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_342",
+      "id": "merged_339",
       "properties": {
         "confidence": 0.9178744554519653,
         "original_detection_count": 1
@@ -12010,7 +11905,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_343",
+      "id": "merged_340",
       "properties": {
         "confidence": 0.9173303246498108,
         "original_detection_count": 1
@@ -12045,7 +11940,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_344",
+      "id": "merged_341",
       "properties": {
         "confidence": 0.9173282384872437,
         "original_detection_count": 1
@@ -12080,7 +11975,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_345",
+      "id": "merged_342",
       "properties": {
         "confidence": 0.9169541001319885,
         "original_detection_count": 1
@@ -12115,7 +12010,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_346",
+      "id": "merged_343",
       "properties": {
         "confidence": 0.9167883396148682,
         "original_detection_count": 1
@@ -12150,7 +12045,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_347",
+      "id": "merged_344",
       "properties": {
         "confidence": 0.9165778756141663,
         "original_detection_count": 1
@@ -12185,7 +12080,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_348",
+      "id": "merged_345",
       "properties": {
         "confidence": 0.9159125089645386,
         "original_detection_count": 1
@@ -12220,7 +12115,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_349",
+      "id": "merged_346",
       "properties": {
         "confidence": 0.9158154129981995,
         "original_detection_count": 1
@@ -12255,7 +12150,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_350",
+      "id": "merged_347",
       "properties": {
         "confidence": 0.9155162572860718,
         "original_detection_count": 1
@@ -12290,7 +12185,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_351",
+      "id": "merged_348",
       "properties": {
         "confidence": 0.9152264595031738,
         "original_detection_count": 1
@@ -12325,7 +12220,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_352",
+      "id": "merged_349",
       "properties": {
         "confidence": 0.9152137637138367,
         "original_detection_count": 1
@@ -12360,7 +12255,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_353",
+      "id": "merged_350",
       "properties": {
         "confidence": 0.9147107005119324,
         "original_detection_count": 1
@@ -12395,7 +12290,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_354",
+      "id": "merged_351",
       "properties": {
         "confidence": 0.9143235087394714,
         "original_detection_count": 1
@@ -12430,7 +12325,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_355",
+      "id": "merged_352",
       "properties": {
         "confidence": 0.9140887260437012,
         "original_detection_count": 1
@@ -12465,7 +12360,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_356",
+      "id": "merged_353",
       "properties": {
         "confidence": 0.9139129519462585,
         "original_detection_count": 1
@@ -12500,7 +12395,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_357",
+      "id": "merged_354",
       "properties": {
         "confidence": 0.9135188460350037,
         "original_detection_count": 1
@@ -12535,7 +12430,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_358",
+      "id": "merged_355",
       "properties": {
         "confidence": 0.913402795791626,
         "original_detection_count": 1
@@ -12570,7 +12465,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_359",
+      "id": "merged_356",
       "properties": {
         "confidence": 0.9130643606185913,
         "original_detection_count": 1
@@ -12605,7 +12500,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_360",
+      "id": "merged_357",
       "properties": {
         "confidence": 0.9129436016082764,
         "original_detection_count": 1
@@ -12640,7 +12535,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_361",
+      "id": "merged_358",
       "properties": {
         "confidence": 0.9123911261558533,
         "original_detection_count": 1
@@ -12675,7 +12570,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_362",
+      "id": "merged_359",
       "properties": {
         "confidence": 0.9118802547454834,
         "original_detection_count": 1
@@ -12710,7 +12605,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_363",
+      "id": "merged_360",
       "properties": {
         "confidence": 0.9114289283752441,
         "original_detection_count": 1
@@ -12745,7 +12640,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_364",
+      "id": "merged_361",
       "properties": {
         "confidence": 0.9112982749938965,
         "original_detection_count": 1
@@ -12780,7 +12675,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_365",
+      "id": "merged_362",
       "properties": {
         "confidence": 0.909294068813324,
         "original_detection_count": 1
@@ -12815,7 +12710,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_366",
+      "id": "merged_363",
       "properties": {
         "confidence": 0.908582329750061,
         "original_detection_count": 1
@@ -12850,7 +12745,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_367",
+      "id": "merged_364",
       "properties": {
         "confidence": 0.9085794687271118,
         "original_detection_count": 1
@@ -12885,7 +12780,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_368",
+      "id": "merged_365",
       "properties": {
         "confidence": 0.908154308795929,
         "original_detection_count": 1
@@ -12920,7 +12815,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_369",
+      "id": "merged_366",
       "properties": {
         "confidence": 0.908010721206665,
         "original_detection_count": 1
@@ -12955,7 +12850,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_370",
+      "id": "merged_367",
       "properties": {
         "confidence": 0.9063957929611206,
         "original_detection_count": 1
@@ -12990,7 +12885,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_371",
+      "id": "merged_368",
       "properties": {
         "confidence": 0.9052929282188416,
         "original_detection_count": 1
@@ -13025,7 +12920,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_372",
+      "id": "merged_369",
       "properties": {
         "confidence": 0.9048869609832764,
         "original_detection_count": 1
@@ -13060,7 +12955,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_373",
+      "id": "merged_370",
       "properties": {
         "confidence": 0.9046992063522339,
         "original_detection_count": 1
@@ -13095,7 +12990,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_374",
+      "id": "merged_371",
       "properties": {
         "confidence": 0.9046025276184082,
         "original_detection_count": 1
@@ -13130,7 +13025,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_375",
+      "id": "merged_372",
       "properties": {
         "confidence": 0.9038940668106079,
         "original_detection_count": 1
@@ -13165,7 +13060,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_376",
+      "id": "merged_373",
       "properties": {
         "confidence": 0.9036982655525208,
         "original_detection_count": 1
@@ -13200,7 +13095,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_377",
+      "id": "merged_374",
       "properties": {
         "confidence": 0.903628945350647,
         "original_detection_count": 1
@@ -13235,7 +13130,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_378",
+      "id": "merged_375",
       "properties": {
         "confidence": 0.9033406972885132,
         "original_detection_count": 1
@@ -13270,7 +13165,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_379",
+      "id": "merged_376",
       "properties": {
         "confidence": 0.903252124786377,
         "original_detection_count": 1
@@ -13305,7 +13200,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_380",
+      "id": "merged_377",
       "properties": {
         "confidence": 0.9032207131385803,
         "original_detection_count": 1
@@ -13340,7 +13235,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_381",
+      "id": "merged_378",
       "properties": {
         "confidence": 0.9016474485397339,
         "original_detection_count": 1
@@ -13375,7 +13270,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_382",
+      "id": "merged_379",
       "properties": {
         "confidence": 0.9010549187660217,
         "original_detection_count": 1
@@ -13410,7 +13305,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_383",
+      "id": "merged_380",
       "properties": {
         "confidence": 0.9008556008338928,
         "original_detection_count": 1
@@ -13445,7 +13340,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_384",
+      "id": "merged_381",
       "properties": {
         "confidence": 0.9005047678947449,
         "original_detection_count": 1
@@ -13480,7 +13375,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_385",
+      "id": "merged_382",
       "properties": {
         "confidence": 0.9005005955696106,
         "original_detection_count": 1
@@ -13515,7 +13410,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_386",
+      "id": "merged_383",
       "properties": {
         "confidence": 0.8972697257995605,
         "original_detection_count": 1
@@ -13550,7 +13445,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_387",
+      "id": "merged_384",
       "properties": {
         "confidence": 0.891828179359436,
         "original_detection_count": 1
@@ -13585,7 +13480,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_388",
+      "id": "merged_385",
       "properties": {
         "confidence": 0.8916907906532288,
         "original_detection_count": 1
@@ -13620,7 +13515,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_389",
+      "id": "merged_386",
       "properties": {
         "confidence": 0.8895478844642639,
         "original_detection_count": 1
@@ -13655,7 +13550,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_390",
+      "id": "merged_387",
       "properties": {
         "confidence": 0.8851253986358643,
         "original_detection_count": 1
@@ -13690,7 +13585,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_391",
+      "id": "merged_388",
       "properties": {
         "confidence": 0.8807371854782104,
         "original_detection_count": 1
@@ -13725,7 +13620,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_392",
+      "id": "merged_389",
       "properties": {
         "confidence": 0.8715883493423462,
         "original_detection_count": 1
@@ -13760,7 +13655,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_393",
+      "id": "merged_390",
       "properties": {
         "confidence": 0.8699014782905579,
         "original_detection_count": 1
@@ -13795,7 +13690,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_394",
+      "id": "merged_391",
       "properties": {
         "confidence": 0.8695105314254761,
         "original_detection_count": 1
@@ -13830,7 +13725,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_395",
+      "id": "merged_392",
       "properties": {
         "confidence": 0.8684296011924744,
         "original_detection_count": 1
@@ -13865,7 +13760,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_396",
+      "id": "merged_393",
       "properties": {
         "confidence": 0.8608241081237793,
         "original_detection_count": 1
@@ -13900,7 +13795,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_397",
+      "id": "merged_394",
       "properties": {
         "confidence": 0.8584348559379578,
         "original_detection_count": 1
@@ -13935,7 +13830,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_398",
+      "id": "merged_395",
       "properties": {
         "confidence": 0.8495644330978394,
         "original_detection_count": 1
@@ -13970,7 +13865,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_399",
+      "id": "merged_396",
       "properties": {
         "confidence": 0.8493650555610657,
         "original_detection_count": 1
@@ -14005,7 +13900,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_400",
+      "id": "merged_397",
       "properties": {
         "confidence": 0.84747314453125,
         "original_detection_count": 1
@@ -14040,7 +13935,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_401",
+      "id": "merged_398",
       "properties": {
         "confidence": 0.8405389189720154,
         "original_detection_count": 1
@@ -14075,7 +13970,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_402",
+      "id": "merged_399",
       "properties": {
         "confidence": 0.8365625739097595,
         "original_detection_count": 1
@@ -14110,7 +14005,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_403",
+      "id": "merged_400",
       "properties": {
         "confidence": 0.8208240270614624,
         "original_detection_count": 1
@@ -14145,7 +14040,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_404",
+      "id": "merged_401",
       "properties": {
         "confidence": 0.8180939555168152,
         "original_detection_count": 1
@@ -14180,7 +14075,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_405",
+      "id": "merged_402",
       "properties": {
         "confidence": 0.8159649968147278,
         "original_detection_count": 1
@@ -14215,7 +14110,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_406",
+      "id": "merged_403",
       "properties": {
         "confidence": 0.8138863444328308,
         "original_detection_count": 1
@@ -14250,7 +14145,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_407",
+      "id": "merged_404",
       "properties": {
         "confidence": 0.8116313815116882,
         "original_detection_count": 1
@@ -14285,7 +14180,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_408",
+      "id": "merged_405",
       "properties": {
         "confidence": 0.8111764788627625,
         "original_detection_count": 1
@@ -14320,7 +14215,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_409",
+      "id": "merged_406",
       "properties": {
         "confidence": 0.8060544729232788,
         "original_detection_count": 1
@@ -14355,7 +14250,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_410",
+      "id": "merged_407",
       "properties": {
         "confidence": 0.8051841259002686,
         "original_detection_count": 1
@@ -14390,7 +14285,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_411",
+      "id": "merged_408",
       "properties": {
         "confidence": 0.8032910823822021,
         "original_detection_count": 1
@@ -14425,7 +14320,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_412",
+      "id": "merged_409",
       "properties": {
         "confidence": 0.8029402494430542,
         "original_detection_count": 1
@@ -14460,7 +14355,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_413",
+      "id": "merged_410",
       "properties": {
         "confidence": 0.7982016205787659,
         "original_detection_count": 1
@@ -14495,7 +14390,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_414",
+      "id": "merged_411",
       "properties": {
         "confidence": 0.79432612657547,
         "original_detection_count": 1
@@ -14530,7 +14425,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_415",
+      "id": "merged_412",
       "properties": {
         "confidence": 0.7825065851211548,
         "original_detection_count": 1
@@ -14565,7 +14460,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_416",
+      "id": "merged_413",
       "properties": {
         "confidence": 0.7272820472717285,
         "original_detection_count": 1
@@ -14600,7 +14495,7 @@
     },
     {
       "type": "Feature",
-      "id": "merged_417",
+      "id": "merged_414",
       "properties": {
         "confidence": 0.6910280585289001,
         "original_detection_count": 1

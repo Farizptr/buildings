@@ -1,5 +1,5 @@
 {
-  "total_buildings": 418,
+  "total_buildings": 415,
   "total_tiles": 4,
   "zoom": 18,
   "confidence_threshold": 0.25,
@@ -8001,37 +8001,10 @@
       "original_count": 1
     },
     {
-      "id": "merged_indiv_det_424",
+      "id": "merged_296",
       "coordinates": [
         [
-          106.73805107471708,
-          -6.2143019618649245
-        ],
-        [
-          106.73812054420068,
-          -6.2143019618649245
-        ],
-        [
-          106.73812054420068,
-          -6.21428190099679
-        ],
-        [
-          106.73805107471708,
-          -6.21428190099679
-        ],
-        [
-          106.73805107471708,
-          -6.2143019618649245
-        ]
-      ],
-      "confidence": 0.32915768027305603,
-      "original_count": 1
-    },
-    {
-      "id": "merged_indiv_det_423",
-      "coordinates": [
-        [
-          106.73812042669852,
+          106.7380543756235,
           -6.2142938218290995
         ],
         [
@@ -8040,76 +8013,22 @@
         ],
         [
           106.7381998041401,
-          -6.214281895360663
+          -6.2142092162113025
         ],
         [
-          106.73812042669852,
-          -6.214281895360663
+          106.7380543756235,
+          -6.2142092162113025
         ],
         [
-          106.73812042669852,
+          106.7380543756235,
           -6.2142938218290995
-        ]
-      ],
-      "confidence": 0.33188962936401367,
-      "original_count": 1
-    },
-    {
-      "id": "merged_indiv_det_311",
-      "coordinates": [
-        [
-          106.73812118933711,
-          -6.214281777992401
-        ],
-        [
-          106.73819488222762,
-          -6.214281777992401
-        ],
-        [
-          106.73819488222762,
-          -6.214207867280264
-        ],
-        [
-          106.73812118933711,
-          -6.214207867280264
-        ],
-        [
-          106.73812118933711,
-          -6.214281777992401
-        ]
-      ],
-      "confidence": 0.9031684994697571,
-      "original_count": 1
-    },
-    {
-      "id": "merged_indiv_det_303",
-      "coordinates": [
-        [
-          106.7380543756235,
-          -6.214281860098416
-        ],
-        [
-          106.73812522235039,
-          -6.214281860098416
-        ],
-        [
-          106.73812522235039,
-          -6.2142092162113025
-        ],
-        [
-          106.7380543756235,
-          -6.2142092162113025
-        ],
-        [
-          106.7380543756235,
-          -6.214281860098416
         ]
       ],
       "confidence": 0.9046846628189087,
-      "original_count": 1
+      "original_count": 2
     },
     {
-      "id": "merged_300",
+      "id": "merged_297",
       "coordinates": [
         [
           106.73873843039473,
@@ -8136,7 +8055,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_301",
+      "id": "merged_298",
       "coordinates": [
         [
           106.738811144387,
@@ -8163,7 +8082,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_302",
+      "id": "merged_299",
       "coordinates": [
         [
           106.73884741592701,
@@ -8190,7 +8109,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_303",
+      "id": "merged_300",
       "coordinates": [
         [
           106.73896533252446,
@@ -8217,7 +8136,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_304",
+      "id": "merged_301",
       "coordinates": [
         [
           106.73783957529622,
@@ -8244,7 +8163,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_305",
+      "id": "merged_302",
       "coordinates": [
         [
           106.73816263842127,
@@ -8271,7 +8190,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_306",
+      "id": "merged_303",
       "coordinates": [
         [
           106.73879453471272,
@@ -8298,7 +8217,34 @@
       "original_count": 1
     },
     {
-      "id": "merged_307",
+      "id": "merged_304",
+      "coordinates": [
+        [
+          106.73805107471708,
+          -6.2143019618649245
+        ],
+        [
+          106.73819488222762,
+          -6.2143019618649245
+        ],
+        [
+          106.73819488222762,
+          -6.214207867280264
+        ],
+        [
+          106.73805107471708,
+          -6.214207867280264
+        ],
+        [
+          106.73805107471708,
+          -6.2143019618649245
+        ]
+      ],
+      "confidence": 0.9031684994697571,
+      "original_count": 2
+    },
+    {
+      "id": "merged_305",
       "coordinates": [
         [
           106.7389119631298,
@@ -8325,7 +8271,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_indiv_det_313",
+      "id": "merged_306",
       "coordinates": [
         [
           106.73875475185923,
@@ -8352,61 +8298,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_indiv_det_315",
-      "coordinates": [
-        [
-          106.73866824063225,
-          -6.214281820632195
-        ],
-        [
-          106.73876491581723,
-          -6.214281820632195
-        ],
-        [
-          106.73876491581723,
-          -6.214171666502075
-        ],
-        [
-          106.73866824063225,
-          -6.214171666502075
-        ],
-        [
-          106.73866824063225,
-          -6.214281820632195
-        ]
-      ],
-      "confidence": 0.9009741544723511,
-      "original_count": 1
-    },
-    {
-      "id": "merged_indiv_det_415",
-      "coordinates": [
-        [
-          106.73867098889787,
-          -6.214294614008453
-        ],
-        [
-          106.73876271941481,
-          -6.214294614008453
-        ],
-        [
-          106.73876271941481,
-          -6.214281891752767
-        ],
-        [
-          106.73867098889787,
-          -6.214281891752767
-        ],
-        [
-          106.73867098889787,
-          -6.214294614008453
-        ]
-      ],
-      "confidence": 0.8036600947380066,
-      "original_count": 1
-    },
-    {
-      "id": "merged_311",
+      "id": "merged_307",
       "coordinates": [
         [
           106.73779472088995,
@@ -8433,7 +8325,34 @@
       "original_count": 1
     },
     {
-      "id": "merged_312",
+      "id": "merged_308",
+      "coordinates": [
+        [
+          106.73866824063225,
+          -6.214294614008453
+        ],
+        [
+          106.73876491581723,
+          -6.214294614008453
+        ],
+        [
+          106.73876491581723,
+          -6.214171666502075
+        ],
+        [
+          106.73866824063225,
+          -6.214171666502075
+        ],
+        [
+          106.73866824063225,
+          -6.214294614008453
+        ]
+      ],
+      "confidence": 0.9009741544723511,
+      "original_count": 2
+    },
+    {
+      "id": "merged_309",
       "coordinates": [
         [
           106.73891354153056,
@@ -8460,7 +8379,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_313",
+      "id": "merged_310",
       "coordinates": [
         [
           106.7389009550061,
@@ -8487,7 +8406,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_314",
+      "id": "merged_311",
       "coordinates": [
         [
           106.73805768537022,
@@ -8514,7 +8433,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_315",
+      "id": "merged_312",
       "coordinates": [
         [
           106.73895045096288,
@@ -8541,7 +8460,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_316",
+      "id": "merged_313",
       "coordinates": [
         [
           106.73835689119642,
@@ -8568,7 +8487,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_317",
+      "id": "merged_314",
       "coordinates": [
         [
           106.73807096082328,
@@ -8595,7 +8514,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_318",
+      "id": "merged_315",
       "coordinates": [
         [
           106.73841930146409,
@@ -8622,7 +8541,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_319",
+      "id": "merged_316",
       "coordinates": [
         [
           106.7390196841734,
@@ -8649,7 +8568,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_320",
+      "id": "merged_317",
       "coordinates": [
         [
           106.73900388060247,
@@ -8676,7 +8595,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_321",
+      "id": "merged_318",
       "coordinates": [
         [
           106.73834952621291,
@@ -8703,7 +8622,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_322",
+      "id": "merged_319",
       "coordinates": [
         [
           106.73861164052141,
@@ -8730,7 +8649,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_323",
+      "id": "merged_320",
       "coordinates": [
         [
           106.73857055192457,
@@ -8757,7 +8676,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_324",
+      "id": "merged_321",
       "coordinates": [
         [
           106.73864786900594,
@@ -8784,7 +8703,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_325",
+      "id": "merged_322",
       "coordinates": [
         [
           106.73775514484703,
@@ -8811,7 +8730,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_326",
+      "id": "merged_323",
       "coordinates": [
         [
           106.73855084094612,
@@ -8838,7 +8757,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_327",
+      "id": "merged_324",
       "coordinates": [
         [
           106.73852621689548,
@@ -8865,7 +8784,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_328",
+      "id": "merged_325",
       "coordinates": [
         [
           106.73855134386031,
@@ -8892,7 +8811,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_329",
+      "id": "merged_326",
       "coordinates": [
         [
           106.73854101095458,
@@ -8919,7 +8838,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_330",
+      "id": "merged_327",
       "coordinates": [
         [
           106.73847232166736,
@@ -8946,7 +8865,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_331",
+      "id": "merged_328",
       "coordinates": [
         [
           106.73788814132422,
@@ -8973,7 +8892,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_332",
+      "id": "merged_329",
       "coordinates": [
         [
           106.73820442245415,
@@ -9000,7 +8919,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_333",
+      "id": "merged_330",
       "coordinates": [
         [
           106.73885522910496,
@@ -9027,7 +8946,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_334",
+      "id": "merged_331",
       "coordinates": [
         [
           106.73863857712604,
@@ -9054,7 +8973,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_335",
+      "id": "merged_332",
       "coordinates": [
         [
           106.73886057649725,
@@ -9081,7 +9000,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_336",
+      "id": "merged_333",
       "coordinates": [
         [
           106.73830248425475,
@@ -9108,7 +9027,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_337",
+      "id": "merged_334",
       "coordinates": [
         [
           106.73811541507348,
@@ -9135,7 +9054,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_338",
+      "id": "merged_335",
       "coordinates": [
         [
           106.73840461487998,
@@ -9162,7 +9081,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_339",
+      "id": "merged_336",
       "coordinates": [
         [
           106.73830281142727,
@@ -9189,7 +9108,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_340",
+      "id": "merged_337",
       "coordinates": [
         [
           106.73796711600062,
@@ -9216,7 +9135,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_341",
+      "id": "merged_338",
       "coordinates": [
         [
           106.73871909291847,
@@ -9243,7 +9162,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_342",
+      "id": "merged_339",
       "coordinates": [
         [
           106.73865897183532,
@@ -9270,7 +9189,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_343",
+      "id": "merged_340",
       "coordinates": [
         [
           106.73890345942709,
@@ -9297,7 +9216,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_344",
+      "id": "merged_341",
       "coordinates": [
         [
           106.73890615080381,
@@ -9324,7 +9243,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_345",
+      "id": "merged_342",
       "coordinates": [
         [
           106.73802947469994,
@@ -9351,7 +9270,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_346",
+      "id": "merged_343",
       "coordinates": [
         [
           106.73789599641168,
@@ -9378,7 +9297,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_347",
+      "id": "merged_344",
       "coordinates": [
         [
           106.73891144106165,
@@ -9405,7 +9324,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_348",
+      "id": "merged_345",
       "coordinates": [
         [
           106.73824642499767,
@@ -9432,7 +9351,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_349",
+      "id": "merged_346",
       "coordinates": [
         [
           106.738062033196,
@@ -9459,7 +9378,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_350",
+      "id": "merged_347",
       "coordinates": [
         [
           106.7379664528562,
@@ -9486,7 +9405,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_351",
+      "id": "merged_348",
       "coordinates": [
         [
           106.73838107114534,
@@ -9513,7 +9432,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_352",
+      "id": "merged_349",
       "coordinates": [
         [
           106.73892589738898,
@@ -9540,7 +9459,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_353",
+      "id": "merged_350",
       "coordinates": [
         [
           106.73871463315663,
@@ -9567,7 +9486,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_354",
+      "id": "merged_351",
       "coordinates": [
         [
           106.73876583045967,
@@ -9594,7 +9513,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_355",
+      "id": "merged_352",
       "coordinates": [
         [
           106.7386297732628,
@@ -9621,7 +9540,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_356",
+      "id": "merged_353",
       "coordinates": [
         [
           106.73815569748513,
@@ -9648,7 +9567,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_357",
+      "id": "merged_354",
       "coordinates": [
         [
           106.73895941804403,
@@ -9675,7 +9594,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_358",
+      "id": "merged_355",
       "coordinates": [
         [
           106.7389626514614,
@@ -9702,7 +9621,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_359",
+      "id": "merged_356",
       "coordinates": [
         [
           106.73795856981542,
@@ -9729,7 +9648,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_360",
+      "id": "merged_357",
       "coordinates": [
         [
           106.73849846755729,
@@ -9756,7 +9675,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_361",
+      "id": "merged_358",
       "coordinates": [
         [
           106.73804552182901,
@@ -9783,7 +9702,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_362",
+      "id": "merged_359",
       "coordinates": [
         [
           106.73781564247633,
@@ -9810,7 +9729,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_363",
+      "id": "merged_360",
       "coordinates": [
         [
           106.73886798637795,
@@ -9837,7 +9756,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_364",
+      "id": "merged_361",
       "coordinates": [
         [
           106.73848065994207,
@@ -9864,7 +9783,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_365",
+      "id": "merged_362",
       "coordinates": [
         [
           106.73779472438923,
@@ -9891,7 +9810,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_366",
+      "id": "merged_363",
       "coordinates": [
         [
           106.7384030498215,
@@ -9918,7 +9837,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_367",
+      "id": "merged_364",
       "coordinates": [
         [
           106.73889244901147,
@@ -9945,7 +9864,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_368",
+      "id": "merged_365",
       "coordinates": [
         [
           106.73880350785112,
@@ -9972,7 +9891,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_369",
+      "id": "merged_366",
       "coordinates": [
         [
           106.73778035660803,
@@ -9999,7 +9918,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_370",
+      "id": "merged_367",
       "coordinates": [
         [
           106.73886330822825,
@@ -10026,7 +9945,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_371",
+      "id": "merged_368",
       "coordinates": [
         [
           106.73882300371588,
@@ -10053,7 +9972,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_372",
+      "id": "merged_369",
       "coordinates": [
         [
           106.73807519724505,
@@ -10080,7 +9999,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_373",
+      "id": "merged_370",
       "coordinates": [
         [
           106.7389768074645,
@@ -10107,7 +10026,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_374",
+      "id": "merged_371",
       "coordinates": [
         [
           106.73881644905123,
@@ -10134,7 +10053,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_375",
+      "id": "merged_372",
       "coordinates": [
         [
           106.73884615544921,
@@ -10161,7 +10080,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_376",
+      "id": "merged_373",
       "coordinates": [
         [
           106.73831166088348,
@@ -10188,7 +10107,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_377",
+      "id": "merged_374",
       "coordinates": [
         [
           106.73886461814618,
@@ -10215,7 +10134,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_378",
+      "id": "merged_375",
       "coordinates": [
         [
           106.73839123698599,
@@ -10242,7 +10161,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_379",
+      "id": "merged_376",
       "coordinates": [
         [
           106.73864089000745,
@@ -10269,7 +10188,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_380",
+      "id": "merged_377",
       "coordinates": [
         [
           106.738789723222,
@@ -10296,7 +10215,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_381",
+      "id": "merged_378",
       "coordinates": [
         [
           106.7383920487373,
@@ -10323,7 +10242,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_382",
+      "id": "merged_379",
       "coordinates": [
         [
           106.73783051711098,
@@ -10350,7 +10269,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_383",
+      "id": "merged_380",
       "coordinates": [
         [
           106.7381268788813,
@@ -10377,7 +10296,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_384",
+      "id": "merged_381",
       "coordinates": [
         [
           106.73781199471136,
@@ -10404,7 +10323,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_385",
+      "id": "merged_382",
       "coordinates": [
         [
           106.73894919564191,
@@ -10431,7 +10350,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_386",
+      "id": "merged_383",
       "coordinates": [
         [
           106.73781260420014,
@@ -10458,7 +10377,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_387",
+      "id": "merged_384",
       "coordinates": [
         [
           106.73877946537687,
@@ -10485,7 +10404,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_388",
+      "id": "merged_385",
       "coordinates": [
         [
           106.73813539535331,
@@ -10512,7 +10431,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_389",
+      "id": "merged_386",
       "coordinates": [
         [
           106.73901555240263,
@@ -10539,7 +10458,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_390",
+      "id": "merged_387",
       "coordinates": [
         [
           106.73838979086213,
@@ -10566,7 +10485,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_391",
+      "id": "merged_388",
       "coordinates": [
         [
           106.73900126731496,
@@ -10593,7 +10512,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_392",
+      "id": "merged_389",
       "coordinates": [
         [
           106.738814104001,
@@ -10620,7 +10539,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_393",
+      "id": "merged_390",
       "coordinates": [
         [
           106.7382443010365,
@@ -10647,7 +10566,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_394",
+      "id": "merged_391",
       "coordinates": [
         [
           106.73824234536823,
@@ -10674,7 +10593,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_395",
+      "id": "merged_392",
       "coordinates": [
         [
           106.73805765557518,
@@ -10701,7 +10620,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_396",
+      "id": "merged_393",
       "coordinates": [
         [
           106.73902950033153,
@@ -10728,7 +10647,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_397",
+      "id": "merged_394",
       "coordinates": [
         [
           106.73781283453877,
@@ -10755,7 +10674,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_398",
+      "id": "merged_395",
       "coordinates": [
         [
           106.73796365113958,
@@ -10782,7 +10701,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_399",
+      "id": "merged_396",
       "coordinates": [
         [
           106.73902510638072,
@@ -10809,7 +10728,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_400",
+      "id": "merged_397",
       "coordinates": [
         [
           106.7385682778422,
@@ -10836,7 +10755,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_401",
+      "id": "merged_398",
       "coordinates": [
         [
           106.73784467374844,
@@ -10863,7 +10782,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_402",
+      "id": "merged_399",
       "coordinates": [
         [
           106.7379027011566,
@@ -10890,7 +10809,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_403",
+      "id": "merged_400",
       "coordinates": [
         [
           106.73856571186661,
@@ -10917,7 +10836,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_404",
+      "id": "merged_401",
       "coordinates": [
         [
           106.7386538961182,
@@ -10944,7 +10863,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_405",
+      "id": "merged_402",
       "coordinates": [
         [
           106.73857342117117,
@@ -10971,7 +10890,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_406",
+      "id": "merged_403",
       "coordinates": [
         [
           106.73823633716438,
@@ -10998,7 +10917,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_407",
+      "id": "merged_404",
       "coordinates": [
         [
           106.73782758561401,
@@ -11025,7 +10944,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_408",
+      "id": "merged_405",
       "coordinates": [
         [
           106.73770694492617,
@@ -11052,7 +10971,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_409",
+      "id": "merged_406",
       "coordinates": [
         [
           106.7376708984375,
@@ -11079,7 +10998,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_410",
+      "id": "merged_407",
       "coordinates": [
         [
           106.73857876029615,
@@ -11106,7 +11025,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_411",
+      "id": "merged_408",
       "coordinates": [
         [
           106.73768344730888,
@@ -11133,7 +11052,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_412",
+      "id": "merged_409",
       "coordinates": [
         [
           106.73779689274625,
@@ -11160,7 +11079,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_413",
+      "id": "merged_410",
       "coordinates": [
         [
           106.73799643440816,
@@ -11187,7 +11106,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_414",
+      "id": "merged_411",
       "coordinates": [
         [
           106.73793003152241,
@@ -11214,7 +11133,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_415",
+      "id": "merged_412",
       "coordinates": [
         [
           106.73788597866633,
@@ -11241,7 +11160,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_416",
+      "id": "merged_413",
       "coordinates": [
         [
           106.73775400072032,
@@ -11268,7 +11187,7 @@
       "original_count": 1
     },
     {
-      "id": "merged_417",
+      "id": "merged_414",
       "coordinates": [
         [
           106.7386514215741,

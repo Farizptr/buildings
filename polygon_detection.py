@@ -82,45 +82,94 @@ def convert_tile_detections_to_shapely_polygons(all_tile_detections):
             
     return shapely_polygons_with_attrs
 
-# Placeholder for the merging function - to be implemented next
+def get_long_axis(polygon):
+    """
+    Menghitung sumbu panjang dari sebuah poligon.
+    Mengembalikan vektor arah sumbu panjang (dinormalisasi).
+    """
+    # Dapatkan minimum bounding rectangle
+    try:
+        # Gunakan minimum_rotated_rectangle jika tersedia
+        mbr = polygon.minimum_rotated_rectangle
+    except AttributeError:
+        # Fallback ke envelope jika minimum_rotated_rectangle tidak tersedia
+        mbr = polygon.envelope
+    
+    # Dapatkan koordinat dari MBR
+    coords = list(mbr.exterior.coords)
+    
+    # Hitung panjang sisi-sisi MBR
+    sides = []
+    for i in range(len(coords) - 1):
+        dx = coords[i+1][0] - coords[i][0]
+        dy = coords[i+1][1] - coords[i][1]
+        sides.append(((dx, dy), (dx**2 + dy**2)**0.5))
+    
+    # Temukan sisi terpanjang
+    longest_side = max(sides, key=lambda x: x[1])
+    
+    # Normalisasi vektor
+    dx, dy = longest_side[0]
+    length = longest_side[1]
+    if length > 0:
+        dx /= length
+        dy /= length
+    
+    return (dx, dy)
+
+def calculate_axis_alignment(axis1, axis2):
+    """
+    Menghitung keselarasan antara dua sumbu.
+    Mengembalikan nilai antara 0 dan 1, di mana 1 berarti sejajar sempurna.
+    """
+    # Hitung dot product
+    dot_product = abs(axis1[0] * axis2[0] + axis1[1] * axis2[1])
+    
+    # Dot product dari dua vektor unit adalah kosinus dari sudut antara mereka
+    # Kita menggunakan nilai absolut untuk mengatasi orientasi yang berlawanan
+    return dot_product
+
 def merge_overlapping_detections(individual_detections, 
                                  iou_thresh, 
                                  touch_enabled, 
                                  min_edge_distance_deg):
     """
-    Merges overlapping and proximal detections from a list of individual Shapely polygons.
-    Proximity is now based on minimum edge distance instead of centroid distance.
+    Merges overlapping and proximal detections using a greedy best match algorithm.
+    Each detection can be paired with at most one detection from a different tile.
     """
     if not individual_detections:
         return []
 
-    merged_buildings = []
-    processed_indices = [False] * len(individual_detections)
+    # Pra-hitung sumbu panjang untuk setiap poligon
+    long_axes = []
+    for det in individual_detections:
+        polygon = det['polygon']
+        long_axis = get_long_axis(polygon)
+        long_axes.append(long_axis)
 
+    # Langkah 1: Cari semua koneksi potensial antar deteksi dari tile berbeda
+    all_connections = []  # Format: (i, j, score)
+    
     for i in range(len(individual_detections)):
-        if processed_indices[i]:
-            continue
-
-        current_group_indices = {i}
-        group_polygons = [individual_detections[i]['polygon']]
-        group_confidences = [individual_detections[i]['confidence']]
-        group_ids = [individual_detections[i]['id']]
+        poly_i_obj = individual_detections[i]
+        tile_i_id = poly_i_obj.get('tile_id', 'UNKNOWN')
         
-        queue = [i]
-        head = 0
-        while head < len(queue):
-            current_idx = queue[head]
-            head += 1
+        for j in range(i+1, len(individual_detections)):
+            poly_j_obj = individual_detections[j]
+            tile_j_id = poly_j_obj.get('tile_id', 'UNKNOWN')
             
-            poly_i_obj = individual_detections[current_idx]
-
-            for j in range(len(individual_detections)):
-                if processed_indices[j] or j == current_idx or j in current_group_indices:
-                    continue
-
-                poly_j_obj = individual_detections[j]
-                
+            # Hanya proses jika dari tile berbeda
+            if tile_i_id != tile_j_id and tile_i_id != 'UNKNOWN' and tile_j_id != 'UNKNOWN':
+                # Periksa hubungan geometris
                 related_geometrically = False
+                connection_score = float('inf')  # Skor lebih kecil = lebih baik
+                
+                # Hitung keselarasan sumbu
+                axis_alignment = calculate_axis_alignment(long_axes[i], long_axes[j])
+                
+                # Beri bobot lebih besar pada keselarasan sumbu untuk memperkuat pengaruhnya
+                alignment_weight = 10.0  # Sesuaikan nilai ini jika perlu
+                alignment_factor = axis_alignment ** alignment_weight  # Mempertajam perbedaan
                 
                 # 1. Check IoU (akan selalu false jika iou_thresh > 1.0)
                 intersection = poly_i_obj['polygon'].intersection(poly_j_obj['polygon']).area
@@ -128,79 +177,67 @@ def merge_overlapping_detections(individual_detections,
                     union_val = poly_i_obj['polygon'].area + poly_j_obj['polygon'].area - intersection
                     if union_val > 0 and (intersection / union_val) > iou_thresh:
                         related_geometrically = True
+                        # Skor berdasarkan IoU dan keselarasan sumbu
+                        connection_score = -(intersection / union_val) * alignment_factor
                 
                 # 2. Check Touches (if not related by IoU and touch is enabled)
                 if not related_geometrically and touch_enabled:
                     if poly_i_obj['polygon'].touches(poly_j_obj['polygon']):
                         related_geometrically = True
+                        # Skor berdasarkan panjang sisi yang bersentuhan dan keselarasan sumbu
+                        boundary_i = poly_i_obj['polygon'].boundary
+                        boundary_j = poly_j_obj['polygon'].boundary
+                        touch_length = boundary_i.intersection(boundary_j).length
+                        connection_score = -touch_length * alignment_factor
                 
                 # 3. Check Minimum Edge Distance (if not related by IoU or touch, and min_edge_distance_deg > 0)
                 if not related_geometrically and min_edge_distance_deg > 0:
                     edge_dist = poly_i_obj['polygon'].distance(poly_j_obj['polygon'])
                     if 0 < edge_dist < min_edge_distance_deg:
                         related_geometrically = True
+                        # Skor berdasarkan jarak dan keselarasan sumbu
+                        # Semakin kecil jarak dan semakin tinggi keselarasan, semakin baik skornya
+                        epsilon = 1e-10  # Untuk menghindari pembagian dengan nol
+                        connection_score = edge_dist / (alignment_factor + epsilon)
                 
-                # MODIFIKASI LOGIKA: Gabungkan hanya jika terkait secara geometris DAN dari tile berbeda
+                # Jika terkait secara geometris, tambahkan ke daftar koneksi potensial
                 if related_geometrically:
-                    if poly_i_obj.get('tile_id') != poly_j_obj.get('tile_id'):
-                        # Memenuhi kedua kondisi: geometris DAN beda tile
-                        current_group_indices.add(j)
-                        group_polygons.append(poly_j_obj['polygon'])
-                        group_confidences.append(poly_j_obj['confidence'])
-                        group_ids.append(poly_j_obj['id'])
-                        if not processed_indices[j]:
-                             queue.append(j)
-
-        # Setelah satu grup komponen terhubung selesai dibangun (queue kosong)
-        for idx_in_group in current_group_indices:
-            processed_indices[idx_in_group] = True
-            
-        if group_polygons: 
-            # Perhitungan untuk logging dan keputusan split (biarkan ini dihitung)
-            current_group_original_tile_ids = []
-            temp_group_original_ids_for_log_and_split = [] 
-            for k_original_idx in current_group_indices:
-                original_det_obj = individual_detections[k_original_idx]
-                current_group_original_tile_ids.append(original_det_obj.get('tile_id', 'TILE_ID_MISSING'))
-                temp_group_original_ids_for_log_and_split.append(original_det_obj.get('id', 'NO_ID'))
-            
-            tile_id_counts = {}
-            for tid in current_group_original_tile_ids:
-                tile_id_counts[tid] = tile_id_counts.get(tid, 0) + 1
-            
-            has_same_tile_elements_to_merge_decision = any(
-                count > 1 for tid, count in tile_id_counts.items() if tid != 'TILE_ID_MISSING'
-            ) 
-
-            # --- LOGGING START: (Bisa tetap di sini) ---
-            if len(group_polygons) > 1: 
-                if has_same_tile_elements_to_merge_decision:
-                    print(f"DEBUG: Potential same-tile merge! Group (original IDs: {sorted(list(temp_group_original_ids_for_log_and_split))}) is about to be processed.")
-                    print(f"DEBUG: Tile IDs in this group: {sorted(current_group_original_tile_ids)}")
-                    print(f"DEBUG: Tile ID counts: {tile_id_counts}")
-            # --- LOGGING END ---
-
-            # PENGECEKAN UNTUK SPLIT (SEMENTARA DINONAKTIFKAN UNTUK DEBUGGING)
-            # Kondisi berikut ini yang akan kita komentari untuk menonaktifkan pemecahan grup
-            if has_same_tile_elements_to_merge_decision and len(group_polygons) > 1: 
-                print(f"DEBUG: Splitting group due to same-tile elements. Original IDs: {sorted(list(temp_group_original_ids_for_log_and_split))}")
-                for k_original_idx in current_group_indices:
-                    original_det_obj = individual_detections[k_original_idx]
-                    if original_det_obj and original_det_obj.get('polygon'):
-                        poly_envelope = original_det_obj['polygon'].envelope
-                        merged_buildings.append({
-                            'id': f"merged_indiv_{original_det_obj.get('id', k_original_idx)}", 
-                            'polygon': poly_envelope, 
-                            'coordinates': list(poly_envelope.exterior.coords),
-                            'confidence': original_det_obj.get('confidence', 0.0),
-                            'original_ids': [original_det_obj.get('id', k_original_idx)],
-                            'tile_id': original_det_obj.get('tile_id')
-                        })
-                    else:
-                        print(f"DEBUG: Skipping problematic original_det_obj for merged_indiv: index {k_original_idx}")
-                continue 
-            
-            # Selalu lakukan union jika group_polygons ada (karena blok if di atas dikomentari)
+                    all_connections.append((i, j, connection_score))
+    
+    # Langkah 2: Urutkan koneksi berdasarkan skor (skor lebih kecil = lebih baik)
+    all_connections.sort(key=lambda x: x[2])
+    
+    # Langkah 3: Secara greedy, pilih pasangan terbaik
+    used_detections = set()  # Deteksi yang sudah dipasangkan
+    best_pairs = []  # Format: (i, j)
+    
+    for i, j, _ in all_connections:
+        # Hanya pasangkan jika keduanya belum digunakan
+        if i not in used_detections and j not in used_detections:
+            best_pairs.append((i, j))
+            used_detections.add(i)
+            used_detections.add(j)
+    
+    # Langkah 4: Buat komponen berdasarkan pasangan terbaik
+    components = {}
+    for i in range(len(individual_detections)):
+        components[i] = {i}
+    
+    # Gabungkan komponen berdasarkan pasangan terbaik
+    for i, j in best_pairs:
+        # Gabungkan j ke komponen i
+        components[i].add(j)
+        # Hapus komponen j yang sudah digabungkan
+        components.pop(j, None)
+    
+    # Langkah 5: Gabungkan poligon dalam setiap komponen
+    merged_buildings = []
+    for comp_id, indices in components.items():
+        group_polygons = [individual_detections[idx]['polygon'] for idx in indices]
+        group_confidences = [individual_detections[idx]['confidence'] for idx in indices]
+        group_ids = [individual_detections[idx]['id'] for idx in indices]
+        
+        if group_polygons:
             combined_polygon_shape = unary_union(group_polygons)
             merged_envelope = combined_polygon_shape.envelope
             merged_buildings.append({
@@ -210,7 +247,7 @@ def merge_overlapping_detections(individual_detections,
                 'confidence': max(group_confidences) if group_confidences else 0.0,
                 'original_ids': sorted(list(group_ids)) 
             })
-            
+    
     return merged_buildings
 
 
