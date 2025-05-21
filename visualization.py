@@ -3,236 +3,235 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.collections import PatchCollection
 from shapely.geometry import Polygon, shape, box
+from shapely.ops import unary_union
 
 from geojson_utils import load_geojson, extract_polygon
 from tile_utils import create_stitched_image
 
-def visualize_polygon_detections(geojson_path, results_data, output_path=None):
+# Helper to convert Shapely Polygon to Matplotlib Patch
+def shapely_polygon_to_mpl_patch(shapely_polygon, **kwargs):
+    """Convert a Shapely Polygon to a Matplotlib Polygon patch."""
+    # For Polygons with no interior rings (holes)
+    if shapely_polygon.interiors:
+        # More complex polygons with holes require Path and PathPatch
+        # This is a simplified example assuming simple polygons (envelopes from merge)
+        print("Warning: Polygon has interiors (holes), visualization might be simplified.")
+        # Fallback to exterior for simplicity, or implement full Path conversion
+        path_data = [(patches.Path.MOVETO, list(shapely_polygon.exterior.coords)[0])]
+        path_data.extend([(patches.Path.LINETO, pt) for pt in list(shapely_polygon.exterior.coords)[1:]])
+        path_data.append((patches.Path.CLOSEPOLY, list(shapely_polygon.exterior.coords)[0]))
+        
+        # Handle interiors (holes)
+        for interior in shapely_polygon.interiors:
+            path_data.append((patches.Path.MOVETO, list(interior.coords)[0]))
+            path_data.extend([(patches.Path.LINETO, pt) for pt in list(interior.coords)[1:]])
+            path_data.append((patches.Path.CLOSEPOLY, list(interior.coords)[0]))
+            
+        path = patches.Path(np.array([v[1] for v in path_data]), np.array([c[0] for c in path_data]))
+        return patches.PathPatch(path, **kwargs)
+    else:
+        # Simple polygon without holes
+        return patches.Polygon(np.array(list(shapely_polygon.exterior.coords)), closed=True, **kwargs)
+
+def visualize_polygon_detections(geojson_path, results_data, output_path=None, 
+                                 iou_threshold=0.01, # Threshold for highlighting overlaps between *merged* buildings
+                                 max_proximity_distance=0.0): # Max distance for *merged* buildings
     """
-    Visualize all building detections across the entire GeoJSON area on a single map
+    Visualize merged building detections across the entire GeoJSON area on a single map.
     
     Args:
-        geojson_path: Path to the GeoJSON file
-        results_data: Detection results from detect_buildings_in_polygon
-        output_path: Path to save the visualization (optional)
-        
-    Returns:
-        None
+        geojson_path: Path to the GeoJSON file.
+        results_data: Dictionary containing detection results, structured for merged detections.
+                      Expected keys: 'merged_detections_shapely' (list of dicts with 'polygon', 'confidence'),
+                                     'raw_tile_detections_for_background' (optional, for stitched background),
+                                     'total_buildings', 'total_tiles', etc.
+        output_path: Path to save the visualization (optional).
+        iou_threshold: IoU threshold for highlighting overlaps *between merged buildings*.
+        max_proximity_distance: Max distance for highlighting proximity *between merged buildings*.
     """
-    # Load GeoJSON
-    geojson_data = load_geojson(geojson_path)
+    geojson_data_loaded = load_geojson(geojson_path)
+    polygon_area = extract_polygon(geojson_data_loaded)
     
-    # Extract polygon
-    polygon = extract_polygon(geojson_data)
-    
-    # Create figure and axis
     fig, ax = plt.subplots(1, figsize=(15, 15))
-    
-    # Set bounds based on polygon
-    minx, miny, maxx, maxy = polygon.bounds
-    
-    # Create a stitched image as background if images are available
-    if 'detections' in results_data and results_data['detections'] and 'image' in results_data['detections'][0]:
+    minx, miny, maxx, maxy = polygon_area.bounds
+
+    # 1. Create stitched image background (if raw tile data is available)
+    raw_tile_data = results_data.get('raw_tile_detections_for_background')
+    if raw_tile_data and any(d.get('image') for d in raw_tile_data):
         try:
-            # Create stitched image from in-memory tiles
-            stitched_image, transform_params = create_stitched_image(results_data['detections'])
-            
-            # Display the stitched image as background
+            # create_stitched_image expects a list of dicts, each having 'image' and 'bounds'
+            # Ensure raw_tile_data provides this structure if it exists
+            # The 'detections' key in raw_tile_data was the old structure, which should work if passed correctly
+            stitched_image, transform_params = create_stitched_image(raw_tile_data)
             ax.imshow(stitched_image, extent=[
                 transform_params['min_west'], 
                 transform_params['min_west'] + transform_params['width_deg'],
                 transform_params['max_north'] - transform_params['height_deg'],
                 transform_params['max_north']
             ])
-            
-            # Set bounds based on the stitched image
             ax.set_xlim(transform_params['min_west'], transform_params['min_west'] + transform_params['width_deg'])
             ax.set_ylim(transform_params['max_north'] - transform_params['height_deg'], transform_params['max_north'])
         except Exception as e:
-            print(f"Warning: Failed to create stitched image: {e}")
-            print("Falling back to standard visualization")
+            print(f"Warning: Failed to create stitched image for background: {e}")
+            print("Falling back to GeoJSON polygon bounds.")
             ax.set_xlim(minx, maxx)
             ax.set_ylim(miny, maxy)
     else:
-        # Standard visualization without background image
         ax.set_xlim(minx, maxx)
         ax.set_ylim(miny, maxy)
-    
-    # Plot the polygon(s)
-    if geojson_data['type'] == 'FeatureCollection':
-        for i, feature in enumerate(geojson_data['features']):
+
+    # 2. Plot the GeoJSON polygon area
+    if geojson_data_loaded['type'] == 'FeatureCollection':
+        for i, feature in enumerate(geojson_data_loaded['features']):
             geom = shape(feature['geometry'])
             if geom.geom_type in ['Polygon', 'MultiPolygon']:
-                # Get a color from the tab20 colormap
                 color = plt.cm.tab20(i % 20)
-                # Plot the polygon
-                x, y = geom.exterior.xy
-                ax.plot(x, y, color=color, linewidth=2, alpha=0.7)
-                # Add a label if name is available
+                if geom.geom_type == 'Polygon':
+                    x_coords, y_coords = geom.exterior.xy
+                    ax.plot(x_coords, y_coords, color=color, linewidth=2, alpha=0.7)
+                elif geom.geom_type == 'MultiPolygon':
+                    for poly_part in geom.geoms:
+                        x_coords, y_coords = poly_part.exterior.xy
+                        ax.plot(x_coords, y_coords, color=color, linewidth=2, alpha=0.7)
                 if 'properties' in feature and 'name' in feature['properties']:
-                    ax.text(np.mean(x), np.mean(y), feature['properties']['name'], 
-                            fontsize=12, ha='center', va='center', 
-                            bbox=dict(facecolor='white', alpha=0.7))
-    else:
-        # Plot a single polygon
-        x, y = polygon.exterior.xy
-        ax.plot(x, y, color='blue', linewidth=2, alpha=0.7)
-    
-    # Plot tile boundaries
-    for tile_detection in results_data['detections']:
-        bounds = tile_detection['bounds']
-        tile_polygon = Polygon([
-            (bounds[0], bounds[1]),  # SW
-            (bounds[2], bounds[1]),  # SE
-            (bounds[2], bounds[3]),  # NE
-            (bounds[0], bounds[3]),  # NW
-            (bounds[0], bounds[1])   # SW (close the polygon)
-        ])
-        x, y = tile_polygon.exterior.xy
-        ax.plot(x, y, color='gray', linewidth=0.5, alpha=0.3)
-    
-    # Plot building detections
-    building_patches = []
-    confidence_values = []
-    shapely_boxes_polygons = [] # For intersection detection
-    building_id_counter = 1  # Initialize building ID counter
-    
-    for tile_detection in results_data['detections']:
-        # Get tile bounds
-        bounds = tile_detection['bounds']
-        west, south, east, north = bounds
-        
-        # Calculate tile width and height in degrees
-        tile_width = east - west
-        tile_height = north - south
-        
-        # Get boxes and confidences
-        boxes = tile_detection['boxes']
-        confidences = tile_detection['confidences']
-        
-        # Process each box
-        for i, bbox_coords in enumerate(boxes):
-            # Get normalized coordinates (0-1) within the tile
-            x1, y1, x2, y2 = bbox_coords
-            
-            # Convert to image coordinates (assuming 256x256 images)
-            img_width = 256
-            img_height = 256
-            x1_norm = x1 / img_width
-            y1_norm = y1 / img_height
-            x2_norm = x2 / img_width
-            y2_norm = y2 / img_height
-            
-            # Convert to geo coordinates
-            geo_x1 = west + x1_norm * tile_width
-            geo_y1 = north - y1_norm * tile_height  # Flip y-axis
-            geo_x2 = west + x2_norm * tile_width
-            geo_y2 = north - y2_norm * tile_height  # Flip y-axis
-            
-            # Calculate center point for centroid and ID
-            center_lon = (geo_x1 + geo_x2) / 2
-            center_lat = (geo_y1 + geo_y2) / 2
+                     # Simplified text placement
+                    ax.text(geom.centroid.x, geom.centroid.y, feature['properties']['name'], 
+                            fontsize=10, ha='center', va='center', 
+                            bbox=dict(facecolor='white', alpha=0.5, pad=0.1))
+    else: # Single Polygon
+        x_coords, y_coords = polygon_area.exterior.xy
+        ax.plot(x_coords, y_coords, color='blue', linewidth=2, alpha=0.7)
 
-            # Plot centroid marker
-            ax.plot(center_lon, center_lat, marker='o', color='blue', markersize=2, alpha=0.7)
+    # 3. Plot tile boundaries (if raw tile data is available)
+    if raw_tile_data:
+        for tile_info in raw_tile_data:
+            bounds = tile_info.get('bounds')
+            if bounds:
+                tile_shapely = box(bounds[0], bounds[1], bounds[2], bounds[3])
+                x_coords, y_coords = tile_shapely.exterior.xy
+                ax.plot(x_coords, y_coords, color='gray', linewidth=0.5, alpha=0.3)
 
-            # Add building ID text
-            ax.text(center_lon, center_lat, str(building_id_counter), color='black', fontsize=6,
-                    ha='center', va='bottom', bbox=dict(facecolor='white', alpha=0.3, pad=0.1, edgecolor='none'))
-            
-            # Create rectangle patch
-            rect = patches.Rectangle(
-                (geo_x1, geo_y2),  # Lower left corner (x, y)
-                geo_x2 - geo_x1,    # Width
-                geo_y1 - geo_y2,    # Height
-                linewidth=1,
-                edgecolor='none', # Will be set by PatchCollection or individually
-                facecolor='none'  # Will be set by PatchCollection or individually
-            )
-            building_patches.append(rect)
-            
-            # Store shapely box for intersection detection
-            # box(minx, miny, maxx, maxy)
-            current_shapely_box = box(geo_x1, geo_y2, geo_x2, geo_y1)
-            shapely_boxes_polygons.append(current_shapely_box)
-            
-            confidence_values.append(confidences[i] if i < len(confidences) else 0.5)
-            building_id_counter += 1 # Increment for the next building
+    # 4. Plot merged building detections
+    merged_detections = results_data.get('merged_detections_shapely', [])
     
-    # Identify intersecting boxes
-    num_boxes = len(shapely_boxes_polygons)
-    is_intersecting = [False] * num_boxes
-    if num_boxes > 1:
-        for i in range(num_boxes):
-            for j in range(i + 1, num_boxes):
-                if shapely_boxes_polygons[i].intersects(shapely_boxes_polygons[j]):
-                    is_intersecting[i] = True
-                    is_intersecting[j] = True
+    building_patches_mpl = [] # For Matplotlib PatchCollection
+    shapely_polygons_for_eval = [] # List of Shapely polygons for IoU/proximity eval
+    confidence_values_for_color = []
+    building_ids_for_text = []
 
-    # Separate patches for plotting
-    intersecting_building_patches = []
-    non_intersecting_building_patches = []
-    non_intersecting_confidences = []
+    for i, det_data in enumerate(merged_detections):
+        shapely_poly = det_data.get('polygon') # This is the merged Shapely Polygon
+        confidence = det_data.get('confidence', 0.5)
+        det_id = det_data.get('id', f"b_{i}")
 
-    for i in range(num_boxes):
-        if is_intersecting[i]:
-            intersecting_building_patches.append(building_patches[i])
+        if not shapely_poly or not isinstance(shapely_poly, Polygon) or shapely_poly.is_empty:
+            continue
+
+        # Create a Matplotlib patch from the Shapely polygon
+        # edgecolor will be set by PatchCollection or individually for intersecting ones
+        mpl_patch = shapely_polygon_to_mpl_patch(shapely_poly, linewidth=1, facecolor='none', edgecolor='none')
+        building_patches_mpl.append(mpl_patch)
+        shapely_polygons_for_eval.append(shapely_poly)
+        confidence_values_for_color.append(confidence)
+        building_ids_for_text.append(det_id)
+
+        # Plot centroid marker and ID for each merged building
+        centroid = shapely_poly.centroid
+        ax.plot(centroid.x, centroid.y, marker='o', color='darkblue', markersize=2, alpha=0.6)
+        ax.text(centroid.x, centroid.y, str(det_id), color='black', fontsize=5,
+                ha='center', va='bottom', bbox=dict(facecolor='white', alpha=0.2, pad=0.1, edgecolor='none'))
+
+    # 5. Identify intersecting/proximal *merged* buildings for highlighting
+    num_merged_boxes = len(shapely_polygons_for_eval)
+    is_highlighted_red = [False] * num_merged_boxes
+
+    if num_merged_boxes > 1:
+        for i in range(num_merged_boxes):
+            for j in range(i + 1, num_merged_boxes):
+                poly_i = shapely_polygons_for_eval[i]
+                poly_j = shapely_polygons_for_eval[j]
+                
+                marked_by_iou = False
+                marked_by_touching = False
+
+                intersection_val = poly_i.intersection(poly_j).area
+                if intersection_val > 0:
+                    union_val = poly_i.union(poly_j).area 
+                    if union_val > 0:
+                        iou_calc = intersection_val / union_val
+                        if iou_calc > iou_threshold:
+                            is_highlighted_red[i] = True
+                            is_highlighted_red[j] = True
+                            marked_by_iou = True
+                    elif intersection_val > 0: # e.g. identical polygons
+                        is_highlighted_red[i] = True
+                        is_highlighted_red[j] = True
+                        marked_by_iou = True
+                
+                if not marked_by_iou:
+                    if poly_i.touches(poly_j):
+                        is_highlighted_red[i] = True
+                        is_highlighted_red[j] = True
+                        marked_by_touching = True
+                
+                if not marked_by_iou and not marked_by_touching and max_proximity_distance > 0:
+                    dist = poly_i.centroid.distance(poly_j.centroid)
+                    if dist < max_proximity_distance:
+                        is_highlighted_red[i] = True
+                        is_highlighted_red[j] = True
+
+    # Separate patches for plotting based on highlighting
+    highlighted_patches = []
+    normal_patches = []
+    normal_confidences = []
+
+    for i in range(num_merged_boxes):
+        if is_highlighted_red[i]:
+            highlighted_patches.append(building_patches_mpl[i])
         else:
-            non_intersecting_building_patches.append(building_patches[i])
-            non_intersecting_confidences.append(confidence_values[i])
+            normal_patches.append(building_patches_mpl[i])
+            normal_confidences.append(confidence_values_for_color[i])
 
-    # Add intersecting building patches to the plot
-    if intersecting_building_patches:
-        intersecting_collection = PatchCollection(
-            intersecting_building_patches,
-            facecolor='red',  # Distinct color for intersections
-            alpha=0.7,
-            edgecolor='black',
-            linewidth=0.5
+    # Add highlighted patches (red)
+    if highlighted_patches:
+        highlight_collection = PatchCollection(
+            highlighted_patches, facecolor='red', alpha=0.6, edgecolor='darkred', linewidth=0.7
         )
-        ax.add_collection(intersecting_collection)
+        ax.add_collection(highlight_collection)
 
-    # Add non-intersecting building patches to the plot with color based on confidence
-    if non_intersecting_building_patches:
-        non_intersecting_collection = PatchCollection(
-            non_intersecting_building_patches, 
-            cmap=plt.cm.viridis,
-            alpha=0.7,
-            edgecolor='black', # Or a different edgecolor if desired
-            linewidth=0.5
+    # Add normal patches (color by confidence)
+    if normal_patches:
+        normal_collection = PatchCollection(
+            normal_patches, cmap=plt.cm.viridis, alpha=0.65, edgecolor='black', linewidth=0.5
         )
-        # Set the color array based on confidence values
-        non_intersecting_collection.set_array(np.array(non_intersecting_confidences))
-        # Add the collection to the plot
-        ax.add_collection(non_intersecting_collection)
-        # Add a colorbar
-        cbar = plt.colorbar(non_intersecting_collection, ax=ax, shrink=0.7)
-        cbar.set_label('Confidence Score (Non-Intersecting)')
+        normal_collection.set_array(np.array(normal_confidences))
+        ax.add_collection(normal_collection)
+        cbar = plt.colorbar(normal_collection, ax=ax, shrink=0.6)
+        cbar.set_label('Confidence Score (Non-Highlighted Merged Buildings)')
+
+    # 6. Set title and labels
+    ax.set_title(f"Merged Building Detections ({results_data.get('total_buildings', 0)} buildings)", fontsize=16)
+    ax.set_xlabel("Longitude", fontsize=12)
+    ax.set_ylabel("Latitude", fontsize=12)
     
-    # Set title and labels
-    # The len(building_patches) still represents the total number of unique buildings detected
-    ax.set_title(f'Building Detections in GeoJSON Area ({len(building_patches)} buildings)', fontsize=16)
-    ax.set_xlabel('Longitude', fontsize=12)
-    ax.set_ylabel('Latitude', fontsize=12)
-    
-    # Add a legend
-    legend_handles = [
-        plt.Line2D([0], [0], color='blue', linewidth=2, label='GeoJSON Polygon'),
-        plt.Line2D([0], [0], color='gray', linewidth=0.5, label='Tile Boundaries')
+    # 7. Add legend
+    legend_elements = [
+        plt.Line2D([0], [0], color='blue', lw=2, label='GeoJSON Area'),
     ]
-    if non_intersecting_building_patches: # Only add if there are non-intersecting buildings
-        legend_handles.append(patches.Patch(facecolor=plt.cm.viridis(0.5), edgecolor='black', label='Building (Confidence)'))
-    if intersecting_building_patches: # Only add if there are intersecting buildings
-        legend_handles.append(patches.Patch(facecolor='red', edgecolor='black', label='Intersecting Building'))
+    if raw_tile_data: # Only add if tile boundaries were potentially plotted
+        legend_elements.append(plt.Line2D([0], [0], color='gray', lw=0.5, label='Tile Boundaries'))
+    if normal_patches:
+        legend_elements.append(patches.Patch(facecolor=plt.cm.viridis(0.5), edgecolor='black', label='Merged Building (Confidence)'))
+    if highlighted_patches:
+        legend_elements.append(patches.Patch(facecolor='red', edgecolor='darkred', label='Highlighted Merged Building (Overlap/Proximity)'))
     
-    ax.legend(handles=legend_handles, loc='upper right')
-    
-    # Save the figure if output path is provided
+    ax.legend(handles=legend_elements, loc='upper right', fontsize='small')
+    ax.tick_params(axis='both', which='major', labelsize=10)
+    plt.tight_layout(pad=1.5)
+
     if output_path:
         plt.savefig(output_path, bbox_inches='tight', dpi=300)
-        print(f"Visualization saved to {output_path}")
-        plt.close()  # Close the figure to avoid displaying it
+        print(f"Visualization of merged detections saved to {output_path}")
+        plt.close()
     else:
-        # Only show the plot if no output path is provided
-        plt.tight_layout()
         plt.show() 

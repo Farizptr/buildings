@@ -6,12 +6,167 @@ import time
 from tqdm import tqdm
 import concurrent.futures
 from functools import partial
+from shapely.geometry import box
+from shapely.ops import unary_union # Added for merging
 
 from detection import load_model, detect_buildings
 from geojson_utils import load_geojson, extract_polygon, create_example_geojson
 from tile_utils import get_tile_bounds, get_tiles_for_polygon, get_tile_image, process_tile_detections
 from visualization import visualize_polygon_detections
 from building_export import save_buildings_to_json
+
+# --- Helper function to convert tile detections to geographic Shapely polygons ---
+def convert_tile_detections_to_shapely_polygons(all_tile_detections):
+    """
+    Converts raw tile-based detections into a flat list of Shapely polygons 
+    with geographic coordinates and associated confidence scores.
+    """
+    shapely_polygons_with_attrs = []
+    detection_id_counter = 0
+    for tile_detection in all_tile_detections:
+        bounds = tile_detection['bounds'] # west, south, east, north
+        west, south, east, north = bounds
+        tile_width_deg = east - west
+        tile_height_deg = north - south
+        
+        img_width, img_height = 256, 256 # Assuming tile image size used for normalization
+
+        for i, bbox_coords in enumerate(tile_detection['boxes']):
+            x1_norm, y1_norm, x2_norm, y2_norm = bbox_coords # Normalized 0-1 within tile (from model output)
+            
+            # Convert normalized to absolute pixel coordinates if they are not already
+            # This step depends on how 'boxes' are stored. If they are [0-1], convert.
+            # If they are already in pixel coords [0-255], this can be skipped or adjusted.
+            # Assuming 'boxes' from process_tile_detections are [x1,y1,x2,y2] in pixel coords of the tile_image
+            # For this example, let's assume bbox_coords are [x_min_pixel, y_min_pixel, x_max_pixel, y_max_pixel]
+            # If they are normalized (0-1), then:
+            # x1_pixel = x1_norm * img_width
+            # y1_pixel = y1_norm * img_height
+            # x2_pixel = x2_norm * img_width
+            # y2_pixel = y2_norm * img_height
+            # For now, assuming bbox_coords are already in pixel values [0-255] for a 256x256 tile
+            x1_pixel, y1_pixel, x2_pixel, y2_pixel = bbox_coords
+
+            # Convert pixel coordinates to normalized (0-1) within this tile
+            x1_norm_tile = x1_pixel / img_width
+            y1_norm_tile = y1_pixel / img_height
+            x2_norm_tile = x2_pixel / img_width
+            y2_norm_tile = y2_pixel / img_height
+
+            # Convert normalized tile coordinates to geographic coordinates
+            geo_x1 = west + x1_norm_tile * tile_width_deg
+            geo_y1_bottom_up = south + (1 - y2_norm_tile) * tile_height_deg # y is often from top in images
+            geo_x2 = west + x2_norm_tile * tile_width_deg
+            geo_y2_bottom_up = south + (1 - y1_norm_tile) * tile_height_deg
+            
+            # Create Shapely box: box(minx, miny, maxx, maxy)
+            # Ensure minx < maxx and miny < maxy
+            current_shapely_box = box(
+                min(geo_x1, geo_x2), 
+                min(geo_y1_bottom_up, geo_y2_bottom_up), 
+                max(geo_x1, geo_x2), 
+                max(geo_y1_bottom_up, geo_y2_bottom_up)
+            )
+            
+            confidence = tile_detection['confidences'][i] if i < len(tile_detection['confidences']) else 0.0
+            
+            shapely_polygons_with_attrs.append({
+                'id': f"det_{detection_id_counter}",
+                'polygon': current_shapely_box,
+                'confidence': confidence
+            })
+            detection_id_counter += 1
+            
+    return shapely_polygons_with_attrs
+
+# Placeholder for the merging function - to be implemented next
+def merge_overlapping_detections(individual_detections, 
+                                 iou_thresh, 
+                                 touch_enabled, 
+                                 min_edge_distance_deg):
+    """
+    Merges overlapping and proximal detections from a list of individual Shapely polygons.
+    Proximity is now based on minimum edge distance instead of centroid distance.
+    """
+    if not individual_detections:
+        return []
+
+    merged_buildings = []
+    processed_indices = [False] * len(individual_detections)
+
+    for i in range(len(individual_detections)):
+        if processed_indices[i]:
+            continue
+
+        current_group_indices = {i}
+        group_polygons = [individual_detections[i]['polygon']]
+        group_confidences = [individual_detections[i]['confidence']]
+        group_ids = [individual_detections[i]['id']]
+        
+        queue = [i]
+        head = 0
+        while head < len(queue):
+            current_idx = queue[head]
+            head += 1
+            
+            poly_i_obj = individual_detections[current_idx]
+
+            for j in range(len(individual_detections)):
+                if processed_indices[j] or j == current_idx or j in current_group_indices:
+                    continue
+
+                poly_j_obj = individual_detections[j]
+                
+                related = False
+                # 1. Check IoU
+                intersection = poly_i_obj['polygon'].intersection(poly_j_obj['polygon']).area
+                if intersection > 0:
+                    # union = poly_i_obj['polygon'].area + poly_j_obj['polygon'].area - intersection 
+                    # Using unary_union.area is more robust for complex shapes or self-intersections, though potentially slower.
+                    # However, for bounding boxes, direct area sum minus intersection is fine and faster.
+                    union_val = poly_i_obj['polygon'].area + poly_j_obj['polygon'].area - intersection
+                    if union_val > 0 and (intersection / union_val) > iou_thresh:
+                        related = True
+                
+                # 2. Check Touches (if not related by IoU and touch is enabled)
+                if not related and touch_enabled:
+                    if poly_i_obj['polygon'].touches(poly_j_obj['polygon']):
+                        related = True
+                
+                # 3. Check Minimum Edge Distance (if not related by IoU or touch, and min_edge_distance_deg > 0)
+                if not related and min_edge_distance_deg > 0:
+                    # Calculate edge distance. This is 0 if they touch or intersect.
+                    edge_dist = poly_i_obj['polygon'].distance(poly_j_obj['polygon'])
+                    # We are interested if they are close but *not* touching/intersecting (distance > 0)
+                    # and that distance is less than our threshold.
+                    if 0 < edge_dist < min_edge_distance_deg:
+                        related = True
+                
+                if related:
+                    current_group_indices.add(j)
+                    group_polygons.append(poly_j_obj['polygon'])
+                    group_confidences.append(poly_j_obj['confidence'])
+                    group_ids.append(poly_j_obj['id'])
+                    if not processed_indices[j]:
+                         queue.append(j)
+
+        for idx_in_group in current_group_indices:
+            processed_indices[idx_in_group] = True
+            
+        if group_polygons:
+            combined_polygon_shape = unary_union(group_polygons)
+            merged_envelope = combined_polygon_shape.envelope
+            
+            merged_buildings.append({
+                'id': f"merged_{len(merged_buildings)}",
+                'polygon': merged_envelope, 
+                'coordinates': list(merged_envelope.exterior.coords),
+                'confidence': max(group_confidences) if group_confidences else 0.0,
+                'original_ids': group_ids
+            })
+            
+    return merged_buildings
+
 
 def process_tile_batch(tile_batch, model, conf):
     """Process a batch of tiles and return their detection results"""
@@ -61,17 +216,27 @@ def create_batches(items, batch_size):
     """Split a list of items into batches of the specified size"""
     return [items[i:i + batch_size] for i in range(0, len(items), batch_size)]
 
-def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detection_results", zoom=18, conf=0.25, batch_size=5):
+def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detection_results", zoom=18, conf=0.25, batch_size=5,
+                                enable_merging=True,
+                                merge_iou_threshold=0.05, 
+                                merge_touch_enabled=True, 
+                                merge_min_edge_distance_deg=0.00001 # Diubah dari merge_centroid_proximity_deg
+                                ):
     """
-    Detect buildings within a polygon defined in a GeoJSON file using optimized batch processing with 2 workers
+    Detect buildings within a polygon defined in a GeoJSON file using optimized batch processing.
+    Optionally merges fragmented detections.
     
     Args:
         model: Loaded YOLOv8 model
         geojson_path: Path to the GeoJSON file
         output_dir: Directory to save detection results
         zoom: Zoom level for tiles
-        conf: Confidence threshold
+        conf: Confidence threshold for individual detections
         batch_size: Number of tiles per batch
+        enable_merging: Whether to perform post-processing to merge fragmented detections.
+        merge_iou_threshold: IoU threshold for considering detections part of the same group for merging.
+        merge_touch_enabled: Whether touching polygons are considered for merging.
+        merge_min_edge_distance_deg: Max edge distance (degrees) for merging non-touching, non-overlapping detections.
         
     Returns:
         Dictionary with detection results and execution time
@@ -99,7 +264,7 @@ def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detecti
     print(f"Created {len(tile_batches)} batches with batch size {batch_size}")
     
     # Process batches in parallel with 2 workers
-    all_detections = []
+    all_detections_raw_per_tile = [] # Renamed from all_detections
     total_buildings = 0
     
     # Create a partial function with fixed arguments
@@ -118,55 +283,106 @@ def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detecti
             try:
                 batch_detections = future.result()
                 if batch_detections:
-                    all_detections.extend(batch_detections)
-                    total_buildings += sum(d['detections'] for d in batch_detections)
+                    all_detections_raw_per_tile.extend(batch_detections) # Store raw per-tile results
+                    # total_buildings += sum(d['detections'] for d in batch_detections) # Don't sum here if merging
             except Exception as exc:
                 print(f"Batch {batch_idx} generated an exception: {exc}")
     
-    # Save results to JSON (without images)
     results_path = os.path.join(output_dir, "detection_results.json")
     
+    final_detections_for_json = []
+    final_merged_shapely_objects = [] # For visualization
+    total_buildings_final = 0
+
+    if enable_merging:
+        print(f"Converting {sum(len(t['boxes']) for t in all_detections_raw_per_tile)} raw detections to Shapely objects for merging...")
+        individual_shapely_detections = convert_tile_detections_to_shapely_polygons(all_detections_raw_per_tile)
+        
+        print(f"Merging {len(individual_shapely_detections)} individual detections...")
+        merged_buildings_list = merge_overlapping_detections(
+            individual_shapely_detections,
+            merge_iou_threshold,
+            merge_touch_enabled,
+            merge_min_edge_distance_deg
+        )
+        total_buildings_final = len(merged_buildings_list)
+        print(f"Total buildings after merging: {total_buildings_final}")
+
+        for mb in merged_buildings_list:
+            final_detections_for_json.append({
+                'id': mb['id'],
+                'coordinates': mb['coordinates'], # Already in geojson-friendly format
+                'confidence': mb['confidence'],
+                'original_count': len(mb['original_ids'])
+            })
+            final_merged_shapely_objects.append(mb) # Contains the 'polygon' Shapely object
+    else:
+        # If merging is disabled, use the old logic (or adapt convert_tile_detections_to_shapely_polygons)
+        # For now, let's just use the converted individual detections if merging is off
+        # This part might need refinement if non-merged output is still desired in the old per-tile format
+        print("Merging disabled. Processing individual detections for output.")
+        individual_shapely_detections = convert_tile_detections_to_shapely_polygons(all_detections_raw_per_tile)
+        total_buildings_final = len(individual_shapely_detections)
+        for det in individual_shapely_detections:
+             final_detections_for_json.append({
+                'id': det['id'],
+                'coordinates': list(det['polygon'].exterior.coords),
+                'confidence': det['confidence']
+            })
+             final_merged_shapely_objects.append(det) # Contains the 'polygon' Shapely object
+
+
     # Create a copy of the results without the images for JSON serialization
-    json_results = {
-        'total_buildings': total_buildings,
-        'total_tiles': len(tiles),
+    json_results_payload = {
+        'total_buildings': total_buildings_final,
+        'total_tiles': len(tiles), # This remains the number of processed tiles
         'zoom': zoom,
-        'confidence_threshold': conf,
-        'detections': [{k: v for k, v in d.items() if k != 'image'} for d in all_detections]
+        'confidence_threshold': conf, # Original detection confidence
+        'merging_enabled': enable_merging,
+        'merge_iou_threshold': merge_iou_threshold if enable_merging else None,
+        'merge_touch_enabled': merge_touch_enabled if enable_merging else None,
+        'merge_min_edge_distance_deg': merge_min_edge_distance_deg if enable_merging else None,
+        'detections': final_detections_for_json # This is now a list of merged buildings
     }
     
     with open(results_path, 'w') as f:
-        json.dump(json_results, f, indent=2)
+        json.dump(json_results_payload, f, indent=2)
     
     end_time = time.time()
     execution_time = end_time - start_time
     
     # Add execution time to results
-    json_results['execution_time'] = execution_time
+    json_results_payload['execution_time'] = execution_time
     
     print(f"Processing completed in {execution_time:.2f} seconds")
     print(f"Detection results saved to {results_path}")
-    print(f"Total buildings detected: {total_buildings}")
+    print(f"Total buildings detected: {total_buildings_final}") # Use final count
     
-    # Create a visualization of all detections with in-memory images
     visualization_path = os.path.join(output_dir, "polygon_visualization.png")
     
-    # Create results_data with images for visualization
-    results_data = {
-        'total_buildings': total_buildings,
+    visualization_results_data = {
+        'total_buildings': total_buildings_final,
         'total_tiles': len(tiles),
         'zoom': zoom,
-        'confidence_threshold': conf,
-        'detections': all_detections  # This includes the images
+        'confidence_threshold': conf, # Original detection confidence for context
+        'merged_detections_shapely': final_merged_shapely_objects, 
+        'raw_tile_detections_for_background': all_detections_raw_per_tile 
     }
     
-    visualize_polygon_detections(geojson_path, results_data, visualization_path)
-    
-    # Save buildings to JSON
+    print("Visualizing merged detections...")
+    visualize_polygon_detections(
+        geojson_path, 
+        visualization_results_data, 
+        visualization_path, 
+        iou_threshold=0.01,  # Threshold for highlighting overlaps *between merged* buildings
+        max_proximity_distance=0.00005 # Max distance for highlighting *between merged* buildings (adjust as needed)
+    )
+
+    # Save buildings to JSON - this will use json_results_payload
     buildings_json_path = os.path.join(output_dir, "buildings.json")
-    save_buildings_to_json(json_results, buildings_json_path)
+    save_buildings_to_json(json_results_payload, buildings_json_path) # Pass the new payload
     
-    return json_results
+    return json_results_payload
 
 if __name__ == "__main__":
     # Check if shapely and mercantile are installed
@@ -197,14 +413,19 @@ if __name__ == "__main__":
         try:
             batch_size = int(sys.argv[2])
         except:
-            pass
+            pass # Keep default if conversion fails
     
     # Load the YOLOv8 model
     model = load_model(model_path)
     
     # Detect buildings in the polygon with optimized batch processing
+    # Adjust merging parameters here to be more conservative:
     results = detect_buildings_in_polygon(
-        model, geojson_path, output_dir, zoom=18, conf=0.25, batch_size=batch_size
+        model, geojson_path, output_dir, zoom=18, conf=0.25, batch_size=batch_size,
+        enable_merging=False, 
+        merge_iou_threshold=1.1,      # Increased from 0.05
+        merge_touch_enabled=True,    # Changed from True
+        merge_min_edge_distance_deg=0.0000001 # Kriteria baru, ~1.1 meter. Set ke 0 jika tidak ingin aktif.
     )
     
     print("\nDetection Summary:")
