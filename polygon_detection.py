@@ -129,26 +129,77 @@ def calculate_axis_alignment(axis1, axis2):
     # Kita menggunakan nilai absolut untuk mengatasi orientasi yang berlawanan
     return dot_product
 
+def parse_tile_id(tile_id_str):
+    """Parse a tile ID string (z/x/y) into its components"""
+    if tile_id_str == 'UNKNOWN':
+        return None, None, None
+    parts = tile_id_str.split('/')
+    if len(parts) != 3:
+        return None, None, None
+    try:
+        z, x, y = map(int, parts)
+        return z, x, y
+    except ValueError:
+        return None, None, None
+
+def calculate_boundary_proximity(poly, tile_id_str, other_poly, other_tile_id_str):
+    """Calculate how close polygons are to their shared tile boundary"""
+    z1, x1, y1 = parse_tile_id(tile_id_str)
+    z2, x2, y2 = parse_tile_id(other_tile_id_str)
+    
+    if None in (z1, x1, y1, z2, x2, y2) or z1 != z2:
+        return 0  # Invalid tile IDs or different zoom levels
+    
+    # Determine if tiles are adjacent
+    is_adjacent = (abs(x1 - x2) <= 1 and abs(y1 - y2) <= 1)
+    if not is_adjacent:
+        return 0  # Tiles are not adjacent
+    
+    # Determine the direction of the shared boundary
+    dx, dy = x2 - x1, y2 - y1
+    
+    # Get centroids
+    c1 = poly.centroid
+    c2 = other_poly.centroid
+    
+    # Calculate boundary proximity score based on how aligned the buildings are
+    # with the direction of the tile boundary
+    if dx != 0 and dy == 0:  # Horizontal boundary
+        # Higher score if buildings are vertically aligned
+        vertical_alignment = 1 - abs(c1.y - c2.y) / max(poly.bounds[3] - poly.bounds[1], other_poly.bounds[3] - other_poly.bounds[1])
+        return vertical_alignment
+    elif dx == 0 and dy != 0:  # Vertical boundary
+        # Higher score if buildings are horizontally aligned
+        horizontal_alignment = 1 - abs(c1.x - c2.x) / max(poly.bounds[2] - poly.bounds[0], other_poly.bounds[2] - other_poly.bounds[0])
+        return horizontal_alignment
+    else:  # Diagonal boundary (corner touching)
+        # For diagonal, use the minimum of horizontal and vertical alignment
+        vertical_alignment = 1 - abs(c1.y - c2.y) / max(poly.bounds[3] - poly.bounds[1], other_poly.bounds[3] - other_poly.bounds[1])
+        horizontal_alignment = 1 - abs(c1.x - c2.x) / max(poly.bounds[2] - poly.bounds[0], other_poly.bounds[2] - other_poly.bounds[0])
+        return min(vertical_alignment, horizontal_alignment)
+
 def merge_overlapping_detections(individual_detections, 
                                  iou_thresh, 
                                  touch_enabled, 
                                  min_edge_distance_deg):
     """
-    Merges overlapping and proximal detections using a greedy best match algorithm.
-    Each detection can be paired with at most one detection from a different tile.
+    Merges overlapping and proximal detections using a multi-phase approach
+    with enhanced scoring that considers tile boundaries.
     """
     if not individual_detections:
         return []
 
-    # Pra-hitung sumbu panjang untuk setiap poligon
+    # Pre-compute long axes for each polygon
     long_axes = []
     for det in individual_detections:
         polygon = det['polygon']
         long_axis = get_long_axis(polygon)
         long_axes.append(long_axis)
 
-    # Langkah 1: Cari semua koneksi potensial antar deteksi dari tile berbeda
-    all_connections = []  # Format: (i, j, score)
+    # Find all potential connections between detections from different tiles
+    # Format: (i, j, score, connection_type)
+    # connection_type: 1=high_confidence, 2=boundary_related, 3=other
+    all_connections = []
     
     for i in range(len(individual_detections)):
         poly_i_obj = individual_detections[i]
@@ -158,79 +209,118 @@ def merge_overlapping_detections(individual_detections,
             poly_j_obj = individual_detections[j]
             tile_j_id = poly_j_obj.get('tile_id', 'UNKNOWN')
             
-            # Hanya proses jika dari tile berbeda
+            # Only process if from different tiles
             if tile_i_id != tile_j_id and tile_i_id != 'UNKNOWN' and tile_j_id != 'UNKNOWN':
-                # Periksa hubungan geometris
-                related_geometrically = False
-                connection_score = float('inf')  # Skor lebih kecil = lebih baik
+                # Check geometric relationships
+                poly_i = poly_i_obj['polygon']
+                poly_j = poly_j_obj['polygon']
                 
-                # Hitung keselarasan sumbu
+                # Calculate center-to-center distance
+                center_i = poly_i.centroid
+                center_j = poly_j.centroid
+                center_distance = center_i.distance(center_j)
+                
+                # Calculate boundary proximity score
+                boundary_score = calculate_boundary_proximity(
+                    poly_i, tile_i_id, poly_j, tile_j_id
+                )
+                
+                # Calculate axis alignment with reduced weight
                 axis_alignment = calculate_axis_alignment(long_axes[i], long_axes[j])
+                alignment_weight = 5.0  # Reduced from 10.0
+                alignment_factor = axis_alignment ** alignment_weight
                 
-                # Beri bobot lebih besar pada keselarasan sumbu untuk memperkuat pengaruhnya
-                alignment_weight = 10.0  # Sesuaikan nilai ini jika perlu
-                alignment_factor = axis_alignment ** alignment_weight  # Mempertajam perbedaan
+                # Initialize connection variables
+                related_geometrically = False
+                connection_score = float('inf')
+                connection_type = 3  # Default: other
                 
-                # 1. Check IoU (akan selalu false jika iou_thresh > 1.0)
-                intersection = poly_i_obj['polygon'].intersection(poly_j_obj['polygon']).area
+                # 1. Check high-confidence connections (IoU)
+                intersection = poly_i.intersection(poly_j).area
                 if intersection > 0:
-                    union_val = poly_i_obj['polygon'].area + poly_j_obj['polygon'].area - intersection
-                    if union_val > 0 and (intersection / union_val) > iou_thresh:
+                    union_val = poly_i.area + poly_j.area - intersection
+                    iou = intersection / union_val if union_val > 0 else 0
+                    if iou > iou_thresh:
                         related_geometrically = True
-                        # Skor berdasarkan IoU dan keselarasan sumbu
-                        connection_score = -(intersection / union_val) * alignment_factor
+                        connection_type = 1  # High confidence
+                        # Score: negative IoU (higher IoU = better score)
+                        connection_score = -iou
                 
-                # 2. Check Touches (if not related by IoU and touch is enabled)
-                if not related_geometrically and touch_enabled:
-                    if poly_i_obj['polygon'].touches(poly_j_obj['polygon']):
+                # 2. Check boundary-related connections
+                if not related_geometrically and boundary_score > 0.7:  # High boundary score
+                    # For touching polygons near boundaries
+                    if touch_enabled and poly_i.touches(poly_j):
                         related_geometrically = True
-                        # Skor berdasarkan panjang sisi yang bersentuhan dan keselarasan sumbu
-                        boundary_i = poly_i_obj['polygon'].boundary
-                        boundary_j = poly_j_obj['polygon'].boundary
+                        connection_type = 2  # Boundary related
+                        # Score based on boundary score and axis alignment
+                        connection_score = -boundary_score * alignment_factor
+                    
+                    # For proximal polygons near boundaries
+                    elif min_edge_distance_deg > 0:
+                        edge_dist = poly_i.distance(poly_j)
+                        if 0 < edge_dist < min_edge_distance_deg:
+                            related_geometrically = True
+                            connection_type = 2  # Boundary related
+                            # Score based on normalized edge distance and boundary score
+                            norm_dist = edge_dist / min_edge_distance_deg
+                            connection_score = norm_dist - boundary_score
+                
+                # 3. Check other geometric relationships
+                if not related_geometrically:
+                    # Check touches
+                    if touch_enabled and poly_i.touches(poly_j):
+                        related_geometrically = True
+                        connection_type = 3  # Other
+                        # Score based on touch length and alignment
+                        boundary_i = poly_i.boundary
+                        boundary_j = poly_j.boundary
                         touch_length = boundary_i.intersection(boundary_j).length
-                        connection_score = -touch_length * alignment_factor
+                        connection_score = -touch_length * alignment_factor * 0.5  # Reduced weight
+                    
+                    # Check edge distance
+                    elif min_edge_distance_deg > 0:
+                        edge_dist = poly_i.distance(poly_j)
+                        if 0 < edge_dist < min_edge_distance_deg:
+                            related_geometrically = True
+                            connection_type = 3  # Other
+                            # Score based on distance, alignment, and center distance
+                            epsilon = 1e-10  # Avoid division by zero
+                            # Higher center distance = worse score
+                            connection_score = edge_dist * (1 + center_distance) / (alignment_factor + epsilon)
                 
-                # 3. Check Minimum Edge Distance (if not related by IoU or touch, and min_edge_distance_deg > 0)
-                if not related_geometrically and min_edge_distance_deg > 0:
-                    edge_dist = poly_i_obj['polygon'].distance(poly_j_obj['polygon'])
-                    if 0 < edge_dist < min_edge_distance_deg:
-                        related_geometrically = True
-                        # Skor berdasarkan jarak dan keselarasan sumbu
-                        # Semakin kecil jarak dan semakin tinggi keselarasan, semakin baik skornya
-                        epsilon = 1e-10  # Untuk menghindari pembagian dengan nol
-                        connection_score = edge_dist / (alignment_factor + epsilon)
-                
-                # Jika terkait secara geometris, tambahkan ke daftar koneksi potensial
+                # Add valid connection to list
                 if related_geometrically:
-                    all_connections.append((i, j, connection_score))
+                    all_connections.append((i, j, connection_score, connection_type))
     
-    # Langkah 2: Urutkan koneksi berdasarkan skor (skor lebih kecil = lebih baik)
-    all_connections.sort(key=lambda x: x[2])
+    # Multi-phase pairing process
+    used_detections = set()
+    best_pairs = []
     
-    # Langkah 3: Secara greedy, pilih pasangan terbaik
-    used_detections = set()  # Deteksi yang sudah dipasangkan
-    best_pairs = []  # Format: (i, j)
+    # Process connections in phases by connection_type (1, 2, then 3)
+    for phase in [1, 2, 3]:
+        # Filter connections for current phase
+        phase_connections = [c for c in all_connections if c[3] == phase]
+        # Sort by score (lower is better)
+        phase_connections.sort(key=lambda x: x[2])
+        
+        # Select best pairs for this phase
+        for i, j, _, _ in phase_connections:
+            if i not in used_detections and j not in used_detections:
+                best_pairs.append((i, j))
+                used_detections.add(i)
+                used_detections.add(j)
     
-    for i, j, _ in all_connections:
-        # Hanya pasangkan jika keduanya belum digunakan
-        if i not in used_detections and j not in used_detections:
-            best_pairs.append((i, j))
-            used_detections.add(i)
-            used_detections.add(j)
-    
-    # Langkah 4: Buat komponen berdasarkan pasangan terbaik
+    # Create components from the best pairs
     components = {}
     for i in range(len(individual_detections)):
         components[i] = {i}
     
-    # Gabungkan komponen berdasarkan pasangan terbaik
+    # Merge components based on best pairs
     for i, j in best_pairs:
-        # Gabungkan j ke komponen i
         components[i].add(j)
-        # Hapus komponen j yang sudah digabungkan
         components.pop(j, None)
     
-    # Langkah 5: Gabungkan poligon dalam setiap komponen
+    # Create merged buildings
     merged_buildings = []
     for comp_id, indices in components.items():
         group_polygons = [individual_detections[idx]['polygon'] for idx in indices]
@@ -249,7 +339,6 @@ def merge_overlapping_detections(individual_detections,
             })
     
     return merged_buildings
-
 
 def process_tile_batch(tile_batch, model, conf):
     """Process a batch of tiles and return their detection results"""
@@ -301,7 +390,7 @@ def create_batches(items, batch_size):
 
 def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detection_results", zoom=18, conf=0.25, batch_size=5,
                                 enable_merging=True,
-                                merge_iou_threshold=0.05, 
+                                merge_iou_threshold=1.1, 
                                 merge_touch_enabled=True, 
                                 merge_min_edge_distance_deg=0.00001 # Diubah dari merge_centroid_proximity_deg
                                 ):
@@ -457,7 +546,7 @@ def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detecti
         geojson_path, 
         visualization_results_data, 
         visualization_path, 
-        iou_threshold=0.01,  # Threshold for highlighting overlaps *between merged* buildings
+        iou_threshold=1.1,  # Threshold for highlighting overlaps *between merged* buildings
         max_proximity_distance=0.00005 # Max distance for highlighting *between merged* buildings (adjust as needed)
     )
 
