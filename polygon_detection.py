@@ -594,7 +594,7 @@ if __name__ == "__main__":
     # Adjust merging parameters here to be more conservative:
     results = detect_buildings_in_polygon(
         model, geojson_path, output_dir, zoom=18, conf=0.25, batch_size=batch_size,
-        enable_merging=True, 
+        enable_merging=False, 
         merge_iou_threshold=1.1,      # Increased from 0.05
         merge_touch_enabled=True,    # Changed from True
         merge_min_edge_distance_deg=0.000001 # Kriteria baru, ~1.1 meter. Set ke 0 jika tidak ingin aktif.
