@@ -138,76 +138,23 @@ def visualize_polygon_detections(geojson_path, results_data, output_path=None,
         # Plot centroid marker and ID for each merged building
         centroid = shapely_poly.centroid
         ax.plot(centroid.x, centroid.y, marker='o', color='darkblue', markersize=2, alpha=0.6)
-        ax.text(centroid.x, centroid.y, str(det_id), color='black', fontsize=5,
-                ha='center', va='bottom', bbox=dict(facecolor='white', alpha=0.2, pad=0.1, edgecolor='none'))
+        # Extract only the number from ID (remove prefixes like 'merged_' or 'det_')
+        display_id = det_id
+        if det_id.startswith('merged_'):
+            display_id = det_id.replace('merged_', '')
+        elif det_id.startswith('det_'):
+            display_id = det_id.replace('det_', '')
+        elif det_id.startswith('b_'):
+            display_id = det_id.replace('b_', '')
+        ax.text(centroid.x, centroid.y, str(display_id), color='black', fontsize=3,
+                ha='center', va='bottom')
 
-    # 5. Identify intersecting/proximal *merged* buildings for highlighting
-    num_merged_boxes = len(shapely_polygons_for_eval)
-    is_highlighted_red = [False] * num_merged_boxes
-
-    if num_merged_boxes > 1:
-        for i in range(num_merged_boxes):
-            for j in range(i + 1, num_merged_boxes):
-                poly_i = shapely_polygons_for_eval[i]
-                poly_j = shapely_polygons_for_eval[j]
-                
-                marked_by_iou = False
-                marked_by_touching = False
-
-                intersection_val = poly_i.intersection(poly_j).area
-                if intersection_val > 0:
-                    union_val = poly_i.union(poly_j).area 
-                    if union_val > 0:
-                        iou_calc = intersection_val / union_val
-                        if iou_calc > iou_threshold:
-                            is_highlighted_red[i] = True
-                            is_highlighted_red[j] = True
-                            marked_by_iou = True
-                    elif intersection_val > 0: # e.g. identical polygons
-                        is_highlighted_red[i] = True
-                        is_highlighted_red[j] = True
-                        marked_by_iou = True
-                
-                if not marked_by_iou:
-                    if poly_i.touches(poly_j):
-                        is_highlighted_red[i] = True
-                        is_highlighted_red[j] = True
-                        marked_by_touching = True
-                
-                if not marked_by_iou and not marked_by_touching and max_proximity_distance > 0:
-                    dist = poly_i.centroid.distance(poly_j.centroid)
-                    if dist < max_proximity_distance:
-                        is_highlighted_red[i] = True
-                        is_highlighted_red[j] = True
-
-    # Separate patches for plotting based on highlighting
-    highlighted_patches = []
-    normal_patches = []
-    normal_confidences = []
-
-    for i in range(num_merged_boxes):
-        if is_highlighted_red[i]:
-            highlighted_patches.append(building_patches_mpl[i])
-        else:
-            normal_patches.append(building_patches_mpl[i])
-            normal_confidences.append(confidence_values_for_color[i])
-
-    # Add highlighted patches (red)
-    if highlighted_patches:
-        highlight_collection = PatchCollection(
-            highlighted_patches, facecolor='red', alpha=0.6, edgecolor='darkred', linewidth=0.7
-        )
-        ax.add_collection(highlight_collection)
-
-    # Add normal patches (color by confidence)
-    if normal_patches:
+    # 5. Add all patches with black outline only
+    if building_patches_mpl:
         normal_collection = PatchCollection(
-            normal_patches, cmap=plt.cm.viridis, alpha=0.65, edgecolor='black', linewidth=0.5
+            building_patches_mpl, facecolor='none', alpha=1.0, edgecolor='black', linewidth=0.5
         )
-        normal_collection.set_array(np.array(normal_confidences))
         ax.add_collection(normal_collection)
-        cbar = plt.colorbar(normal_collection, ax=ax, shrink=0.6)
-        cbar.set_label('Confidence Score (Non-Highlighted Merged Buildings)')
 
     # 6. Set title and labels
     ax.set_title(f"Merged Building Detections ({results_data.get('total_buildings', 0)} buildings)", fontsize=16)
@@ -220,10 +167,8 @@ def visualize_polygon_detections(geojson_path, results_data, output_path=None,
     ]
     if raw_tile_data: # Only add if tile boundaries were potentially plotted
         legend_elements.append(plt.Line2D([0], [0], color='gray', lw=0.5, label='Tile Boundaries'))
-    if normal_patches:
-        legend_elements.append(patches.Patch(facecolor=plt.cm.viridis(0.5), edgecolor='black', label='Merged Building (Confidence)'))
-    if highlighted_patches:
-        legend_elements.append(patches.Patch(facecolor='red', edgecolor='darkred', label='Highlighted Merged Building (Overlap/Proximity)'))
+    if building_patches_mpl:
+        legend_elements.append(patches.Patch(facecolor='none', edgecolor='black', label='Building Detection'))
     
     ax.legend(handles=legend_elements, loc='upper right', fontsize='small')
     ax.tick_params(axis='both', which='major', labelsize=10)
