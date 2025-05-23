@@ -8,6 +8,7 @@ import concurrent.futures
 from functools import partial
 from shapely.geometry import box
 from shapely.ops import unary_union # Added for merging
+import threading # Added for thread lock
 
 from detection import load_model, detect_buildings
 from geojson_utils import load_geojson, extract_polygon, create_example_geojson
@@ -340,7 +341,7 @@ def merge_overlapping_detections(individual_detections,
     
     return merged_buildings
 
-def process_tile_batch(tile_batch, model, conf):
+def process_tile_batch(tile_batch, model, conf, model_lock):
     """Process a batch of tiles and return their detection results"""
     batch_results = []
     
@@ -357,7 +358,9 @@ def process_tile_batch(tile_batch, model, conf):
             
             try:
                 # Detect buildings using the temporary file path
-                results, img = detect_buildings(model, temp_path, conf=conf)
+                # Ensure model access is serialized
+                with model_lock:
+                    results, img = detect_buildings(model, temp_path, conf=conf)
                 
                 # Process detection results
                 boxes, confidences, class_ids = process_tile_detections(results)
@@ -439,8 +442,11 @@ def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detecti
     all_detections_raw_per_tile = [] # Renamed from all_detections
     total_buildings = 0
     
-    # Create a partial function with fixed arguments
-    process_batch = partial(process_tile_batch, model=model, conf=conf)
+    # Create a lock for model access
+    model_lock = threading.Lock()
+    
+    # Create a partial function with fixed arguments, including the lock
+    process_batch = partial(process_tile_batch, model=model, conf=conf, model_lock=model_lock)
     
     # Use ThreadPoolExecutor for parallel processing
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
