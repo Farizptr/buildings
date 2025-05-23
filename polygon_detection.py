@@ -229,10 +229,26 @@ class UnionFind:
 def merge_overlapping_detections(individual_detections, 
                                  iou_thresh, 
                                  touch_enabled, 
-                                 min_edge_distance_deg):
+                                 min_edge_distance_deg,
+                                 allowed_merge_phases=[1, 2]):
     """
-    Merges overlapping and proximal detections using a multi-phase approach
-    with enhanced scoring that considers tile boundaries.
+    Merges overlapping and proximal detections using a selective multi-phase approach
+    with Union-Find transitive merging and evidence-based filtering.
+    
+    Phases:
+    - Phase 1: IoU overlap (STRONG evidence) - Always recommended  
+    - Phase 2: Boundary-related + alignment (GOOD evidence) - Usually safe
+    - Phase 3: Proximity/touching only (WEAK evidence) - May cause false merging
+    
+    Args:
+        individual_detections: List of detection dictionaries with 'polygon', 'confidence', etc.
+        iou_thresh: IoU threshold for Phase 1 merging
+        touch_enabled: Whether to enable touching detection in phases 2 & 3
+        min_edge_distance_deg: Max edge distance for proximity merging  
+        allowed_merge_phases: List of phases to enable [1,2,3]. Default [1,2] prevents false merging.
+        
+    Returns:
+        List of merged building dictionaries with transitive connections resolved.
     """
     if not individual_detections:
         return []
@@ -348,11 +364,15 @@ def merge_overlapping_detections(individual_detections,
     # Sort all connections by phase first, then by score within each phase
     all_connections.sort(key=lambda x: (x[3], x[2]))  # Sort by (phase, score)
     
-    # Apply union operations for valid connections
+    # Apply union operations for high-confidence connections only
+    # Phase 1: IoU overlap (STRONG evidence)
+    # Phase 2: Boundary-related (GOOD evidence) 
+    # Phase 3: Proximity/touching (WEAK evidence) - SKIP to prevent false merging
     for i, j, score, connection_type in all_connections:
-        # Union the detections - this enables transitive merging
-        # A→B, B→C, C→D will all end up in the same component
-        uf.union(i, j)
+        if connection_type in allowed_merge_phases:  # Only merge allowed evidence connections
+            # Union the detections for high-confidence merging
+            uf.union(i, j)
+        # Skip connection_type = 3 to avoid merging separate buildings that are just close
     
     # Get final components from Union-Find
     components = uf.get_components()
@@ -518,7 +538,8 @@ def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detecti
             individual_shapely_detections,
             merge_iou_threshold,
             merge_touch_enabled,
-            merge_min_edge_distance_deg
+            merge_min_edge_distance_deg,
+            allowed_merge_phases=[1, 2]  # Only merge high-confidence phases
         )
         total_buildings_final = len(merged_buildings_list)
         print(f"Total buildings after merging: {total_buildings_final}")
