@@ -179,6 +179,53 @@ def calculate_boundary_proximity(poly, tile_id_str, other_poly, other_tile_id_st
         horizontal_alignment = 1 - abs(c1.x - c2.x) / max(poly.bounds[2] - poly.bounds[0], other_poly.bounds[2] - other_poly.bounds[0])
         return min(vertical_alignment, horizontal_alignment)
 
+class UnionFind:
+    """
+    Union-Find data structure for efficient component merging.
+    Enables transitive connections: A→B→C→D all become one component.
+    """
+    def __init__(self, n):
+        # Initialize each element as its own parent
+        self.parent = list(range(n))
+        self.rank = [0] * n
+        self.components = n
+    
+    def find(self, x):
+        """Find the root of element x with path compression"""
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+    
+    def union(self, x, y):
+        """Union two elements with union by rank"""
+        root_x = self.find(x)
+        root_y = self.find(y)
+        
+        if root_x == root_y:
+            return False  # Already in same component
+        
+        # Union by rank
+        if self.rank[root_x] < self.rank[root_y]:
+            self.parent[root_x] = root_y
+        elif self.rank[root_x] > self.rank[root_y]:
+            self.parent[root_y] = root_x
+        else:
+            self.parent[root_y] = root_x
+            self.rank[root_x] += 1
+        
+        self.components -= 1
+        return True
+    
+    def get_components(self):
+        """Get all components as dictionary {root: [members]}"""
+        components = {}
+        for i in range(len(self.parent)):
+            root = self.find(i)
+            if root not in components:
+                components[root] = []
+            components[root].append(i)
+        return components
+
 def merge_overlapping_detections(individual_detections, 
                                  iou_thresh, 
                                  touch_enabled, 
@@ -293,37 +340,26 @@ def merge_overlapping_detections(individual_detections,
                 if related_geometrically:
                     all_connections.append((i, j, connection_score, connection_type))
     
-    # Multi-phase pairing process
-    used_detections = set()
-    best_pairs = []
+    # Initialize Union-Find data structure for transitive merging
+    n_detections = len(individual_detections)
+    uf = UnionFind(n_detections)
     
     # Process connections in phases by connection_type (1, 2, then 3)
-    for phase in [1, 2, 3]:
-        # Filter connections for current phase
-        phase_connections = [c for c in all_connections if c[3] == phase]
-        # Sort by score (lower is better)
-        phase_connections.sort(key=lambda x: x[2])
-        
-        # Select best pairs for this phase
-        for i, j, _, _ in phase_connections:
-            if i not in used_detections and j not in used_detections:
-                best_pairs.append((i, j))
-                used_detections.add(i)
-                used_detections.add(j)
+    # Sort all connections by phase first, then by score within each phase
+    all_connections.sort(key=lambda x: (x[3], x[2]))  # Sort by (phase, score)
     
-    # Create components from the best pairs
-    components = {}
-    for i in range(len(individual_detections)):
-        components[i] = {i}
+    # Apply union operations for valid connections
+    for i, j, score, connection_type in all_connections:
+        # Union the detections - this enables transitive merging
+        # A→B, B→C, C→D will all end up in the same component
+        uf.union(i, j)
     
-    # Merge components based on best pairs
-    for i, j in best_pairs:
-        components[i].add(j)
-        components.pop(j, None)
+    # Get final components from Union-Find
+    components = uf.get_components()
     
     # Create merged buildings
     merged_buildings = []
-    for comp_id, indices in components.items():
+    for comp_root, indices in components.items():
         group_polygons = [individual_detections[idx]['polygon'] for idx in indices]
         group_confidences = [individual_detections[idx]['confidence'] for idx in indices]
         group_ids = [individual_detections[idx]['id'] for idx in indices]
@@ -336,7 +372,8 @@ def merge_overlapping_detections(individual_detections,
                 'polygon': merged_envelope, 
                 'coordinates': list(merged_envelope.exterior.coords),
                 'confidence': max(group_confidences) if group_confidences else 0.0,
-                'original_ids': sorted(list(group_ids)) 
+                'original_ids': sorted(list(group_ids)),
+                'original_count': len(indices)  # Add count of merged detections
             })
     
     return merged_buildings
@@ -491,7 +528,7 @@ def detect_buildings_in_polygon(model, geojson_path, output_dir="polygon_detecti
                 'id': mb['id'],
                 'coordinates': mb['coordinates'], # Already in geojson-friendly format
                 'confidence': mb['confidence'],
-                'original_count': len(mb['original_ids'])
+                'original_count': mb['original_count']
             })
             final_merged_shapely_objects.append(mb) # Contains the 'polygon' Shapely object
     else:
@@ -597,13 +634,13 @@ if __name__ == "__main__":
     model = load_model(model_path)
     
     # Detect buildings in the polygon with optimized batch processing
-    # Adjust merging parameters here to be more conservative:
+    # Enhanced merging parameters for multi-tile building detection:
     results = detect_buildings_in_polygon(
         model, geojson_path, output_dir, zoom=18, conf=0.25, batch_size=batch_size,
-        enable_merging=False, 
-        merge_iou_threshold=1.1,      # Increased from 0.05
-        merge_touch_enabled=True,    # Changed from True
-        merge_min_edge_distance_deg=0.000001 # Kriteria baru, ~1.1 meter. Set ke 0 jika tidak ingin aktif.
+        enable_merging=True,  # Enable Union-Find transitive merging
+        merge_iou_threshold=0.1,       # Lower threshold for overlapping parts
+        merge_touch_enabled=True,      # Enable touching detection
+        merge_min_edge_distance_deg=0.000001  # ~55 meters max distance for proximity merging
     )
     
     print("\nDetection Summary:")
